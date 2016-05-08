@@ -1,0 +1,174 @@
+package com.dstudio.wd824.one;
+
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.dstudio.wd824.one.Fragments.FgAbout;
+import com.dstudio.wd824.one.Fragments.FgHome;
+import com.dstudio.wd824.one.Fragments.FgQuestion;
+import com.dstudio.wd824.one.Fragments.FgReading;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.concurrent.ExecutionException;
+
+public class MainActivity extends Activity implements View.OnClickListener
+{
+
+    private LinearLayout topBar;
+    private LinearLayout tabLayout;
+
+    private Button btnHome;
+    private Button btnReading;
+    private Button btnQuestion;
+    private Button btnAbout;
+    private ScrollView scrollView;
+
+    private FrameLayout frameLayout;
+    private FragmentManager manager;
+    private Fragment fgHome;
+    private Fragment fgReading;
+    private Fragment fgQuestion;
+    private Fragment fgAbout;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_main);
+
+        topBar = (LinearLayout) findViewById(R.id.top_bar);
+        tabLayout = (LinearLayout) findViewById(R.id.tab_layout);
+        initView();
+        selectFrag(1);
+    }
+
+    private void initView()
+    {
+        btnHome = (Button) findViewById(R.id.btn_home);
+        btnReading = (Button) findViewById(R.id.btn_reading);
+        btnQuestion = (Button) findViewById(R.id.btn_question);
+        btnAbout = (Button) findViewById(R.id.btn_about);
+
+        frameLayout = (FrameLayout) findViewById(R.id.fram_layout);
+        scrollView = (ScrollView) findViewById(R.id.scroll_view);
+
+        btnHome.setOnClickListener(this);
+        btnReading.setOnClickListener(this);
+        btnQuestion.setOnClickListener(this);
+        btnAbout.setOnClickListener(this);
+
+        fgHome = new FgHome();
+        fgReading = new FgReading();
+        fgQuestion = new FgQuestion();
+        fgAbout = new FgAbout();
+
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.btn_home:
+                selectFrag(1);
+                break;
+            case R.id.btn_reading:
+                selectFrag(2);
+                break;
+            case R.id.btn_question:
+                selectFrag(3);
+                break;
+            case R.id.btn_about:
+                selectFrag(4);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    public void selectFrag(int i)
+    {
+        setDefaultIcon();
+        manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        switch (i)
+        {
+            case 1:
+                setDrawable(btnHome, R.drawable.home_picked);
+                btnHome.setTextColor(getResources().getColor(R.color.btn_picked));
+                transaction.replace(R.id.fram_layout, fgHome);
+                break;
+            case 2:
+                setDrawable(btnReading, R.drawable.reading_picked);
+                btnReading.setTextColor(getResources().getColor(R.color.btn_picked));
+                transaction.replace(R.id.fram_layout, fgReading);
+                break;
+            case 3:
+                setDrawable(btnQuestion, R.drawable.question_picked);
+                btnQuestion.setTextColor(getResources().getColor(R.color.btn_picked));
+                transaction.replace(R.id.fram_layout, fgQuestion);
+                break;
+            case 4:
+                setDrawable(btnAbout, R.drawable.about_picked);
+                btnAbout.setTextColor(getResources().getColor(R.color.btn_picked));
+                transaction.replace(R.id.fram_layout, fgAbout);
+        }
+        transaction.commit();
+    }
+
+    public void setDefaultIcon()
+    {
+        setDrawable(btnHome, R.drawable.home);
+        setDrawable(btnReading, R.drawable.reading);
+        setDrawable(btnQuestion, R.drawable.question);
+        setDrawable(btnAbout, R.drawable.about);
+    }
+
+    public void setDrawable(Button btn, int resId)
+    {
+        Drawable drawable = getResources().getDrawable(resId);
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        btn.setCompoundDrawables(null, drawable, null, null);
+        btnHome.setTextColor(getResources().getColor(R.color.btn_normal));
+        btnReading.setTextColor(getResources().getColor(R.color.btn_normal));
+        btnQuestion.setTextColor(getResources().getColor(R.color.btn_normal));
+        btnAbout.setTextColor(getResources().getColor(R.color.btn_normal));
+    }
+
+
+
+}

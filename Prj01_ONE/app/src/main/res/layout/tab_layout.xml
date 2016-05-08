@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/tab_layout"
+              android:paddingTop="2dp"
+              android:paddingBottom="2dp"
+              android:background="#FFF"
+              android:layout_gravity="bottom">
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/btn_home"
+        android:text="首页"
+        android:textSize="10dp"
+        android:gravity="center"
+        android:drawableTop="@drawable/home"
+        android:background="#0000"/>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/btn_reading"
+        android:text="阅读"
+        android:textSize="10dp"
+        android:gravity="center"
+        android:drawableTop="@drawable/reading"
+        android:background="#0000"/>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/btn_question"
+        android:text="问答"
+        android:textSize="10dp"
+        android:gravity="center"
+        android:drawableTop="@drawable/question"
+        android:background="#0000"/>
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:id="@+id/btn_about"
+        android:text="关于"
+        android:textSize="10dp"
+        android:gravity="center"
+        android:drawableTop="@drawable/about"
+        android:background="#0000"/>
+</LinearLayout>

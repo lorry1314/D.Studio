@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:minHeight="500dp"
+              android:layout_marginTop="12dp"
+              android:layout_marginBottom="12dp"
+              android:background="#FFFFFF">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:id="@+id/day"
+        android:text="2016-5-4"
+        android:textSize="12sp"
+        android:textColor="#ABABAB"
+        android:gravity="left"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/article_title"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/article_author"
+            android:textSize="16sp"
+            android:gravity="left"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/praise_num"
+            android:textSize="10sp"
+            android:textColor="#ABABAB"
+            android:paddingRight="15dp"/>
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#CFCFCF"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/article_content"
+        android:lineSpacingExtra="5dp"
+        android:textColor="@color/contentColor"
+        android:textSize="15sp"
+        android:padding="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/article_editor"
+        android:textSize="12sp"
+        android:textColor="#ababab"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"/>
+
+</LinearLayout>
