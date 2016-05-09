@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.dstudio.wd824.one"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+            android:versionCode="1"
+            android:versionName="V0.11">
 
 
     <uses-permission android:name="android.permission.INTERNET"/>
