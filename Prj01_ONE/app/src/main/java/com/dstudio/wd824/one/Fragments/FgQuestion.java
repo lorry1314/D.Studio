@@ -44,7 +44,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
 
     public GestureDetector detector = new GestureDetector(this);
 
-    private int day = 0;
+    private int day = 1;
     private Boolean flag;
 
     private TextView question;
@@ -112,6 +112,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         praiseNum = (TextView) view.findViewById(R.id.praise_num);
         dayText = (TextView) view.findViewById(R.id.day);
 
+        day = HttpUtil.selectWhichDay();
         getData();
 
         return view;
@@ -222,23 +223,32 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
-        if((e2.getY() - e1.getY() > 120) && flag)
+        int whichDay = HttpUtil.selectWhichDay();
+        if((e2.getY() - e1.getY() > 50) && flag)
         {
-            day = 0;
-            sendRequestForQue(day);
+            sendRequestForQue(whichDay);
         }
-        else if(e2.getX() - e1.getX() > 100)
+        else if(e2.getX() - e1.getX() > 50)
         {
+
             day++;
-            getData();
+            if(day == whichDay + 10)
+            {
+                Toast.makeText(getActivity(), "没有数据了 (╯‵□′)╯︵┻━┻z", Toast.LENGTH_LONG).show();
+                day = whichDay + 9;
+            }
+            else
+            {
+                getData();
+            }
         }
-        else if (e1.getX() - e2.getX() > 100)
+        else if (e1.getX() - e2.getX() > 50)
         {
             day--;
-            if(day == -1)
+            if(day == whichDay - 1)
             {
                 Toast.makeText(getActivity(), "已经是最新内容了 :)", Toast.LENGTH_SHORT).show();
-                day = 0;
+                day = whichDay;
             }
             else
             {

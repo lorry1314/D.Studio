@@ -57,7 +57,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
 
     public GestureDetector detector = new GestureDetector(this);
     private boolean flag;
-    private int day = 0;
+    private int day = 1;
 
     private TextView topTitle;
     private ProgressBar bar;
@@ -126,6 +126,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         content = (TextView) view.findViewById(R.id.content);
         imageView = (ImageView) view.findViewById(R.id.img);
 
+        day = HttpUtil.selectWhichDay();
         getData();
 
         return view;
@@ -142,6 +143,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         else
         {
             int updateHour = new Date(file.lastModified()).getHours();
+
             if(HttpUtil.judgeTime(updateHour))
             {
                 sendRequestForHome(day);
@@ -265,19 +267,19 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
+        int whichDay = HttpUtil.selectWhichDay();
         if((e2.getY() - e1.getY() > 50) && flag)
         {
-            day = 0;
-            sendRequestForHome(day);
-
+            sendRequestForHome(whichDay);
         }
         else if(e2.getX() - e1.getX() > 50)
         {
+
             day++;
-            if(day == 10)
+            if(day == whichDay + 10)
             {
                 Toast.makeText(getActivity(), "没有数据了 (╯‵□′)╯︵┻━┻z", Toast.LENGTH_LONG).show();
-                day = 9;
+                day = whichDay + 9;
             }
             else
             {
@@ -287,10 +289,10 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         else if (e1.getX() - e2.getX() > 50)
         {
             day--;
-            if(day == -1)
+            if(day == whichDay - 1)
             {
                 Toast.makeText(getActivity(), "已经是最新内容了 :)", Toast.LENGTH_SHORT).show();
-                day = 0;
+                day = whichDay;
             }
             else
             {

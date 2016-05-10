@@ -88,13 +88,26 @@ public class HttpUtil
     {
         int currentHour = Integer.parseInt(HttpUtil.getCurrentDate("hour", 0));
         System.out.println(currentHour + "," + updateHour);
-        if(currentHour - updateHour >= 5 || currentHour <= 5)
+        if(currentHour - updateHour >= 5)
         {
             return true;
         }
         else
         {
             return false;
+        }
+    }
+
+    public static int selectWhichDay()
+    {
+        int currentHour = Integer.parseInt(getCurrentDate("hour", 0));
+        if (currentHour == 16)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
         }
     }
 
