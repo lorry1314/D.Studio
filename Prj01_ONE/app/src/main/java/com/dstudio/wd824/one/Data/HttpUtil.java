@@ -101,7 +101,7 @@ public class HttpUtil
     public static int selectWhichDay()
     {
         int currentHour = Integer.parseInt(getCurrentDate("hour", 0));
-        if (currentHour == 16)
+        if (currentHour >= 16)
         {
             return 0;
         }
