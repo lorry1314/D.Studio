@@ -63,6 +63,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
         {
             if(msg.what == SHOW_DATA)
             {
+
                 String[] data = (String[]) msg.obj;
                 articleTitle.setText(data[0]);
                 articleAuther.setText(data[1]);
@@ -71,6 +72,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
                 praiseNum.setText(data[4]);
                 dayText.setText(data[5]);
                 bar.setVisibility(View.GONE);
+                scrollView.fullScroll(View.FOCUS_UP);
             }
         }
     };
@@ -139,7 +141,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
     {
         final String readingAPI = "http://211.152.49.184:7001/OneForWeb/one/getOneContentInfo?strDate=" + HttpUtil.getCurrentDate("day", whichDay);
         bar.setVisibility(View.VISIBLE);
-        scrollView.setScrollY(0);
+
         HttpUtil.sendHttpRequest(readingAPI, new HttpCallbackListener()
         {
             @Override
@@ -219,11 +221,11 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
         int whichDay = HttpUtil.selectWhichDay();
-        if((e2.getY() - e1.getY() > 50) && flag)
+        if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
         {
             sendRequestForRd(whichDay);
         }
-        else if(e2.getX() - e1.getX() > 50)
+        else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
 
             day++;
@@ -237,7 +239,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
                 getData();
             }
         }
-        else if (e1.getX() - e2.getX() > 50)
+        else if (e1.getX() - e2.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
             day--;
             if(day == whichDay - 1)

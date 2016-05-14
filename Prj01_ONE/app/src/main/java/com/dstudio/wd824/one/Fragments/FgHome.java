@@ -126,6 +126,8 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         content = (TextView) view.findViewById(R.id.content);
         imageView = (ImageView) view.findViewById(R.id.img);
 
+        
+
         day = HttpUtil.selectWhichDay();
         getData();
 
@@ -232,8 +234,6 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         }
     }
 
-
-
     @Override
     public boolean onDown(MotionEvent motionEvent)
     {
@@ -268,11 +268,11 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
         int whichDay = HttpUtil.selectWhichDay();
-        if((e2.getY() - e1.getY() > 50) && flag)
+        if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
         {
             sendRequestForHome(whichDay);
         }
-        else if(e2.getX() - e1.getX() > 50)
+        else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
 
             day++;
@@ -286,7 +286,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
                 getData();
             }
         }
-        else if (e1.getX() - e2.getX() > 50)
+        else if (e1.getX() - e2.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
             day--;
             if(day == whichDay - 1)
