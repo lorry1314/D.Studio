@@ -1,0 +1,24 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="title_weather">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="text_weather">
+        <item name="android:textSize">10dp</item>
+    </style>
+
+    <style name="text_weather_label">
+        <item name="android:textSize">10dp</item>
+        <item name="android:textColor">#b4b4b4</item>
+    </style>
+
+</resources>

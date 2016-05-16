@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">D Weather</string>
+
+    <!-- iconfont -->
+    <string name="search">&#xe603;</string>
+    <string name="location">&#xe602;</string>
+    <string name="back">&#xe600;</string>
+    <string name="menu">&#xe601;</string>
+</resources>
