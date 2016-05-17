@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -39,6 +40,7 @@ import java.util.Locale;
 public class FgQuestion extends Fragment implements GestureDetector.OnGestureListener
 {
     private TextView topTitle;
+    private Button btnRight;
     private ProgressBar bar;
     private ScrollView scrollView;
 
@@ -82,6 +84,8 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.view_question, container, false);
+        btnRight = (Button) getActivity().findViewById(R.id.right_button);
+        btnRight.setText("");
         topTitle = (TextView) getActivity().findViewById(R.id.top_title);
         topTitle.setText("问答");
         bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
@@ -150,14 +154,27 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
             @Override
             public void onFinish(String response)
             {
-                LocalData.save(response, preDay + "question", getActivity());
+                LocalData.save(response, day + "question", getActivity());
                 parseJSON(response);
             }
 
             @Override
             public void onError(Exception e)
             {
-                parseJSON(LocalData.load(preDay + "question", getActivity()));
+                ((Activity)getActivity()).runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast.makeText(getActivity(), "似乎没有网...", Toast.LENGTH_LONG).show();
+                        bar.setVisibility(View.GONE);
+                    }
+                });
+
+                if(!(LocalData.load(day + "question", getActivity())).equals(""))
+                {
+                    parseJSON(LocalData.load(day + "question", getActivity()));
+                }
             }
         });
     }
@@ -187,6 +204,14 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         }
         catch (Exception e)
         {
+            getActivity().runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    Toast.makeText(getActivity(), "出问题了:(...请刷新下吧", Toast.LENGTH_SHORT).show();
+                }
+            });
             e.printStackTrace();
         }
     }
@@ -227,7 +252,8 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         int whichDay = HttpUtil.selectWhichDay();
         if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
         {
-            sendRequestForQue(whichDay);
+            day = HttpUtil.selectWhichDay();
+            sendRequestForQue(day);
         }
         else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
@@ -256,7 +282,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
                 getData();
             }
         }
-        Log.d("Quse", day + "");
+        Log.d("debug", day + "");
         return false;
     }
 }

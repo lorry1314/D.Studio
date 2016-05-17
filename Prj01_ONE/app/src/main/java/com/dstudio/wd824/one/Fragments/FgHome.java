@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -15,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -33,6 +37,8 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,12 +60,14 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
     private TextView author;
     private TextView content;
     private ImageView imageView;
+    private Button btnSaveImg;
 
     public GestureDetector detector = new GestureDetector(this);
     private boolean flag;
     private int day = 1;
 
     private TextView topTitle;
+    private Button btnRight;
     private ProgressBar bar;
     private ScrollView scrollView;
 
@@ -97,8 +105,35 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.view_home, container, false);
+        btnRight = (Button) getActivity().findViewById(R.id.right_button);
+        btnRight.setText("");
         topTitle = (TextView) getActivity().findViewById(R.id.top_title);
         topTitle.setText("ONE");
+
+        bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
+        dayText = (TextView) view.findViewById(R.id.day);
+        title = (TextView) view.findViewById(R.id.title);
+        author = (TextView) view.findViewById(R.id.author);
+        content = (TextView) view.findViewById(R.id.content);
+        imageView = (ImageView) view.findViewById(R.id.img);
+        btnSaveImg = (Button) view.findViewById(R.id.save_img);
+        Typeface iconfont = Typeface.createFromAsset(getActivity().getAssets(), "iconfont.ttf");
+        btnSaveImg.setTypeface(iconfont);
+        btnSaveImg.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                imageView.setDrawingCacheEnabled(true);
+                Bitmap bitmap = imageView.getDrawingCache();
+                if (bitmap != null)
+                {
+                    new SaveImageTask().execute(bitmap);
+                }
+            }
+        });
+
+
         scrollView = (ScrollView) getActivity().findViewById(R.id.scroll_view);
         scrollView.setOnTouchListener(new View.OnTouchListener()
         {
@@ -119,16 +154,8 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
             }
         });
 
-        bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
-        dayText = (TextView) view.findViewById(R.id.day);
-        title = (TextView) view.findViewById(R.id.title);
-        author = (TextView) view.findViewById(R.id.author);
-        content = (TextView) view.findViewById(R.id.content);
-        imageView = (ImageView) view.findViewById(R.id.img);
-
-        
-
         day = HttpUtil.selectWhichDay();
+        Log.d("debug", day + "");
         getData();
 
         return view;
@@ -176,7 +203,20 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
             @Override
             public void onError(Exception e)
             {
-                parseJSON(LocalData.load(day + "home", getActivity()));
+                ((Activity)getActivity()).runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast.makeText(getActivity(), "似乎没有网...", Toast.LENGTH_LONG).show();
+                        bar.setVisibility(View.GONE);
+                    }
+                });
+
+                if(!(LocalData.load(day + "home", getActivity())).equals(""))
+                {
+                    parseJSON(LocalData.load(day + "home", getActivity()));
+                }
             }
         });
     }
@@ -230,6 +270,14 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         }
         catch (Exception e)
         {
+            getActivity().runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    Toast.makeText(getActivity(), "出问题了:(...请刷新下吧", Toast.LENGTH_SHORT).show();
+                }
+            });
             e.printStackTrace();
         }
     }
@@ -270,7 +318,8 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
         int whichDay = HttpUtil.selectWhichDay();
         if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
         {
-            sendRequestForHome(whichDay);
+            day = HttpUtil.selectWhichDay();
+            sendRequestForHome(day);
         }
         else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
@@ -299,7 +348,45 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
                 getData();
             }
         }
-        Log.d("Quse", day + "");
+        Log.d("debug", "day = " + day + ", whichDay = " + whichDay);
         return false;
     }
+
+    class SaveImageTask extends AsyncTask<Bitmap, Void, String>
+    {
+        @Override
+        protected String doInBackground(Bitmap... bitmaps)
+        {
+            String result = null;
+            try
+            {
+                String sdcardDir = Environment.getExternalStorageDirectory().toString();
+                File file = new File(sdcardDir + "/Download/ONE");
+                if (!file.exists())
+                {
+                    file.mkdir();
+                }
+                File imageFile = new File(file.getAbsolutePath(), new Date().getTime() + ".jpg");
+                FileOutputStream outputStream = new FileOutputStream(imageFile);
+                Bitmap image = bitmaps[0];
+                image.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                outputStream.flush();
+                outputStream.close();
+                result = "图片保存在了" + file.getAbsolutePath() + "目录下";
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String s)
+        {
+            Toast.makeText(getActivity().getApplicationContext(), s, Toast.LENGTH_LONG).show();
+            imageView.setDrawingCacheEnabled(false);
+        }
+    }
+
 }

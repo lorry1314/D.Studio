@@ -88,7 +88,12 @@ public class HttpUtil
     {
         int currentHour = Integer.parseInt(HttpUtil.getCurrentDate("hour", 0));
         System.out.println(currentHour + "," + updateHour);
-        if(currentHour - updateHour >= 5)
+
+        if (currentHour <= 4)
+        {
+            return !(currentHour - updateHour <= 5);
+        }
+        else if (currentHour - updateHour >= 5)
         {
             return true;
         }

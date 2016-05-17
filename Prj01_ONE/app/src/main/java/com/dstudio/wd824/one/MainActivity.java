@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Build;
@@ -49,6 +50,8 @@ public class MainActivity extends Activity implements View.OnClickListener
     private LinearLayout topBar;
     private LinearLayout tabLayout;
 
+    private Button btnRight;
+
     private Button btnHome;
     private Button btnReading;
     private Button btnQuestion;
@@ -77,6 +80,10 @@ public class MainActivity extends Activity implements View.OnClickListener
 
     private void initView()
     {
+        btnRight = (Button) findViewById(R.id.right_button);
+        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont.ttf");
+        btnRight.setTypeface(iconfont);
+
         btnHome = (Button) findViewById(R.id.btn_home);
         btnReading = (Button) findViewById(R.id.btn_reading);
         btnQuestion = (Button) findViewById(R.id.btn_question);

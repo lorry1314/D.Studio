@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
     private TextView praiseNum;
 
     private ProgressBar bar;
+    private Button btnRight;
     private TextView topTitle;
     private ScrollView scrollView;
 
@@ -82,6 +84,8 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.view_reading, container, false);
+        btnRight = (Button) getActivity().findViewById(R.id.right_button);
+        btnRight.setText("");
         topTitle = (TextView) getActivity().findViewById(R.id.top_title);
         topTitle.setText("阅读");
         bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
@@ -137,7 +141,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
         }
     }
 
-    public void sendRequestForRd(int whichDay)
+    public void sendRequestForRd(final int whichDay)
     {
         final String readingAPI = "http://211.152.49.184:7001/OneForWeb/one/getOneContentInfo?strDate=" + HttpUtil.getCurrentDate("day", whichDay);
         bar.setVisibility(View.VISIBLE);
@@ -147,13 +151,27 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
             @Override
             public void onFinish(String response)
             {
+                LocalData.save(response, day + "reading", getActivity());
                 parseJSON(response);
             }
 
             @Override
             public void onError(Exception e)
             {
-                parseJSON(LocalData.load(day + "reading", getActivity()));
+                ((Activity)getActivity()).runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        Toast.makeText(getActivity(), "似乎没有网...", Toast.LENGTH_LONG).show();
+                        bar.setVisibility(View.GONE);
+                    }
+                });
+
+                if(!(LocalData.load(day + "reading", getActivity())).equals(""))
+                {
+                    parseJSON(LocalData.load(day + "reading", getActivity()));
+                }
             }
         });
     }
@@ -183,6 +201,14 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
         }
         catch (Exception e)
         {
+            getActivity().runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    Toast.makeText(getActivity(), "出问题了:(...请刷新下吧", Toast.LENGTH_SHORT).show();
+                }
+            });
             e.printStackTrace();
         }
     }
@@ -223,7 +249,8 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
         int whichDay = HttpUtil.selectWhichDay();
         if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
         {
-            sendRequestForRd(whichDay);
+            day = HttpUtil.selectWhichDay();
+            sendRequestForRd(day);
         }
         else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {

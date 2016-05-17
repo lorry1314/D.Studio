@@ -218,7 +218,7 @@ public class LocalCache
         return bitmap;
     }
 
-    private static boolean cleanCache(Context context, String uniqueName)
+    public static boolean cleanCache(Context context, String uniqueName)
     {
         boolean b;
         try
@@ -234,6 +234,13 @@ public class LocalCache
             e.printStackTrace();
         }
         return b;
+    }
+
+    public static String getSize(Context context, String uniqueName)
+    {
+        float sizeByte = (float) openDiskLruCache(context, uniqueName).size();
+        Log.d("debug", sizeByte + "");
+        return String.format("%.2f", sizeByte / (1024 * 1024)) + "MB";
     }
 
 }

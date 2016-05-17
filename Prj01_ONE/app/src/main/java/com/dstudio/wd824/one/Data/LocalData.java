@@ -2,6 +2,7 @@ package com.dstudio.wd824.one.Data;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -47,10 +48,22 @@ public class LocalData
             }
             stream.close();
             inStream.close();
+            return stream.toString();
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             e.printStackTrace();
+            return "";
         }
-        return stream.toString();
+
+    }
+
+    public static void delete(Context context)
+    {
+        String[] fileList = context.fileList();
+        for(int i = 0; i < fileList.length; i++)
+        {
+            context.deleteFile(fileList[i]);
+        }
     }
 }
