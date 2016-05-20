@@ -1,12 +1,8 @@
-package com.dstudio.wd824.one.Fragments;
+package com.dstudio.wd824.one.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.dstudio.wd824.one.MainActivity;
 import com.dstudio.wd824.one.R;
 import com.dstudio.wd824.one.SettingActivity;
 

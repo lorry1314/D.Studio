@@ -1,4 +1,4 @@
-package com.dstudio.wd824.one.Data;
+package com.dstudio.wd824.one.data;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

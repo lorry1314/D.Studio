@@ -1,9 +1,4 @@
-package com.dstudio.wd824.one.Data;
-
-import android.app.Activity;
-import android.util.Log;
-
-import com.dstudio.wd824.one.Data.HttpCallbackListener;
+package com.dstudio.wd824.one.data;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

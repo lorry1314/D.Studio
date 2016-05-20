@@ -1,9 +1,7 @@
-package com.dstudio.wd824.one.Fragments;
+package com.dstudio.wd824.one.fragments;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +9,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.Base64;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -25,37 +22,22 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dstudio.wd824.one.Data.HttpCallbackListener;
-import com.dstudio.wd824.one.Data.HttpUtil;
-import com.dstudio.wd824.one.Data.LocalCache;
-import com.dstudio.wd824.one.Data.LocalData;
-import com.dstudio.wd824.one.MainActivity;
+import com.dstudio.wd824.one.data.HttpCallbackListener;
+import com.dstudio.wd824.one.data.HttpUtil;
+import com.dstudio.wd824.one.data.LocalCache;
+import com.dstudio.wd824.one.data.LocalData;
 import com.dstudio.wd824.one.R;
-import com.jakewharton.disklrucache.DiskLruCache;
 
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 
-import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
-import cn.sharesdk.onekeyshare.ShareContentCustomizeCallback;
-import cn.sharesdk.wechat.friends.Wechat;
-import cn.sharesdk.wechat.moments.WechatMoments;
 
 /**
  * Created by wd824 on 2016/5/5.

@@ -4,48 +4,22 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.dstudio.wd824.one.Fragments.FgAbout;
-import com.dstudio.wd824.one.Fragments.FgHome;
-import com.dstudio.wd824.one.Fragments.FgQuestion;
-import com.dstudio.wd824.one.Fragments.FgReading;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
+import com.dstudio.wd824.one.fragments.FgAbout;
+import com.dstudio.wd824.one.fragments.FgHome;
+import com.dstudio.wd824.one.fragments.FgQuestion;
+import com.dstudio.wd824.one.fragments.FgReading;
 
 import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.onekeyshare.OnekeyShare;
 
 public class MainActivity extends Activity implements View.OnClickListener
 {

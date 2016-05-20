@@ -1,13 +1,10 @@
-package com.dstudio.wd824.one.Data;
+package com.dstudio.wd824.one.data;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 
 /**
  * Created by wd824 on 2016/5/5.

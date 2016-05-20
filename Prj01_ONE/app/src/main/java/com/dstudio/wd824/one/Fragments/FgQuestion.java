@@ -1,8 +1,7 @@
-package com.dstudio.wd824.one.Fragments;
+package com.dstudio.wd824.one.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,23 +13,20 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dstudio.wd824.one.Data.HttpCallbackListener;
-import com.dstudio.wd824.one.Data.HttpUtil;
-import com.dstudio.wd824.one.Data.LocalData;
-import com.dstudio.wd824.one.MainActivity;
+import com.dstudio.wd824.one.data.HttpCallbackListener;
+import com.dstudio.wd824.one.data.HttpUtil;
+import com.dstudio.wd824.one.data.LocalData;
 import com.dstudio.wd824.one.R;
 
 import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 

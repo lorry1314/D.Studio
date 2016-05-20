@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -13,8 +12,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dstudio.wd824.one.Data.LocalCache;
-import com.dstudio.wd824.one.Data.LocalData;
+import com.dstudio.wd824.one.data.LocalCache;
+import com.dstudio.wd824.one.data.LocalData;
 
 public class SettingActivity extends Activity implements View.OnClickListener
 {
