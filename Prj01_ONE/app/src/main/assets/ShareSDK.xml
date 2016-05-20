@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DevInfor>
+    
+    <ShareSDK 
+        AppKey = "12f22f597909e"/> <!-- 修改成你在sharesdk后台注册的应用的appkey"-->
+    
+    <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
+    <SinaWeibo
+        Id="1"
+        SortId="1"
+        AppKey="3306881368"
+        AppSecret="703dc5f8a832f8ecfccdff16c476ba37"
+        RedirectUrl="http://www.bing.com"
+        ShareByAppClient="true"
+        Enable="true" />
+    
+    <QZone
+        Id="3"
+        SortId="3"
+        AppId="1105336935"
+        AppKey="72UPpSFXr7dgQfKb"
+        Enable="true" />
+
+    <Wechat
+        Id="4"
+        SortId="4"
+        AppId="wx72c06d3a45e14f7d"
+        AppSecret="e7457fab36516e9036df44cc1f26e164"
+        BypassApproval="false"
+        Enable="true" />
+    
+    <WechatMoments
+        Id="5"
+        SortId="5"
+        AppId="wx72c06d3a45e14f7d"
+        AppSecret="e7457fab36516e9036df44cc1f26e164"
+        BypassApproval="false"
+        Enable="true" />
+        
+	<WechatFavorite
+        Id="6"
+        SortId="6"
+        AppId="wx72c06d3a45e14f7d"
+        AppSecret="e7457fab36516e9036df44cc1f26e164"
+        Enable="true" />
+    
+	<!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
+	<QQ
+        Id="7"
+        SortId="7"
+        AppId="1105336935"
+        AppKey="72UPpSFXr7dgQfKb"
+        ShareByAppClient="true"
+        Enable="true" />
+
+    <Email
+        Id="12" 
+        SortId="12"
+        Enable="true" />
+    
+    <ShortMessage
+        Id="13" 
+        SortId="13"
+        Enable="true" />
+
+</DevInfor>

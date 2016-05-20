@@ -34,6 +34,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+
 /**
  * Created by wd824 on 2016/5/5.
  */
@@ -48,6 +51,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
 
     private int day = 1;
     private Boolean flag;
+    private String webLink;
 
     private TextView question;
     private TextView questionCont;
@@ -73,6 +77,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
                 editor.setText(data[4]);
                 praiseNum.setText(data[5]);
                 dayText.setText(data[6]);
+                webLink = data[7];
                 bar.setVisibility(View.GONE);
                 scrollView.fullScroll(View.FOCUS_UP);
             }
@@ -84,10 +89,28 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.view_question, container, false);
-        btnRight = (Button) getActivity().findViewById(R.id.right_button);
-        btnRight.setText("");
         topTitle = (TextView) getActivity().findViewById(R.id.top_title);
         topTitle.setText("问答");
+        btnRight = (Button) getActivity().findViewById(R.id.right_button);
+        btnRight.setText(R.string.share);
+        btnRight.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                ShareSDK.initSDK(getActivity());
+                OnekeyShare oks = new OnekeyShare();
+                oks.disableSSOWhenAuthorize();
+                oks.setTitle(question.getText().toString());
+                oks.setTitleUrl(webLink);
+                oks.setText(questionCont.getText().toString());
+                oks.setUrl(webLink);
+                oks.setSiteUrl(webLink);
+                oks.setImageUrl("http://img.wdjimg.com/mms/icon/v1/a/91/946b23773692af0e351772392298c91a_256_256.png");
+                oks.show(getActivity());
+            }
+        });
+
         bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
         scrollView = (ScrollView) getActivity().findViewById(R.id.scroll_view);
         scrollView.setOnTouchListener(new View.OnTouchListener()
@@ -116,10 +139,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         editor = (TextView) view.findViewById(R.id.editor);
         praiseNum = (TextView) view.findViewById(R.id.praise_num);
         dayText = (TextView) view.findViewById(R.id.day);
-
-        day = HttpUtil.selectWhichDay();
         getData();
-
         return view;
     }
 
@@ -188,15 +208,16 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
             String question = questionEntity.getString("strQuestionTitle");
             String quesCont = questionEntity.getString("strQuestionContent");
             String answer = questionEntity.getString("strAnswerTitle");
-            String answCont = questionEntity.getString("strAnswerContent").replace("<br>", "\n");
+            String answCont = questionEntity.getString("strAnswerContent").replace("<br>", "\n").replace("<strong>", "").replace("</strong>", "");
             String editor = questionEntity.getString("sEditor");
             String praiseNum = questionEntity.getString("strPraiseNumber") + " 赞";
             String strTime = questionEntity.getString("strQuestionMarketTime");
             java.util.Date date= java.sql.Date.valueOf(strTime);
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy", Locale.ENGLISH);
             String time = sdf.format(date);
+            String webLink = questionEntity.getString("sWebLk");
 
-            String[] data = {question, quesCont, answer, answCont, editor, praiseNum, time};
+            String[] data = {question, quesCont, answer, answCont, editor, praiseNum, time, webLink};
             Message message = new Message();
             message.what = SHOW_DATA;
             message.obj = data;
@@ -249,20 +270,19 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
-        int whichDay = HttpUtil.selectWhichDay();
         if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
         {
-            day = HttpUtil.selectWhichDay();
+            day = 1;
             sendRequestForQue(day);
         }
         else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
 
             day++;
-            if(day == whichDay + 10)
+            if(day == 10)
             {
                 Toast.makeText(getActivity(), "没有数据了 (╯‵□′)╯︵┻━┻z", Toast.LENGTH_LONG).show();
-                day = whichDay + 9;
+                day = 9;
             }
             else
             {
@@ -272,10 +292,10 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         else if (e1.getX() - e2.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
         {
             day--;
-            if(day == whichDay - 1)
+            if(day == 0)
             {
                 Toast.makeText(getActivity(), "已经是最新内容了 :)", Toast.LENGTH_SHORT).show();
-                day = whichDay;
+                day = 1;
             }
             else
             {

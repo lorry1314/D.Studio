@@ -70,6 +70,11 @@ public class LocalCache
         return new File(cachePath + File.separator + uniqueName);
     }
 
+    /**
+     * 获取当前版本号
+     * @param context
+     * @return
+     */
     public static int getAppVersion(Context context)
     {
         try
@@ -169,6 +174,13 @@ public class LocalCache
         return sb.toString();
     }
 
+    /**
+     * 写入缓存
+     * @param context
+     * @param strUrl 图片网络地址
+     * @param uniqueName 文件夹名称
+     * @return
+     */
     public static boolean writeCache(final Context context, final String strUrl, final String uniqueName)
     {
         try
@@ -197,6 +209,12 @@ public class LocalCache
         return true;
     }
 
+    /**
+     * 读取图片缓存
+     * @param context
+     * @param imgUrl 图片网络地址
+     * @return
+     */
     public static Bitmap readImgCache(Context context, String imgUrl)
     {
         Bitmap bitmap = null;
@@ -218,6 +236,12 @@ public class LocalCache
         return bitmap;
     }
 
+    /**
+     * 清除指定文件夹下的所有缓存
+     * @param context
+     * @param uniqueName 文件夹名称
+     * @return
+     */
     public static boolean cleanCache(Context context, String uniqueName)
     {
         boolean b;
@@ -236,6 +260,12 @@ public class LocalCache
         return b;
     }
 
+    /**
+     * 获取指定文件夹下缓存文件大小
+     * @param context
+     * @param uniqueName 文件夹名称
+     * @return
+     */
     public static String getSize(Context context, String uniqueName)
     {
         float sizeByte = (float) openDiskLruCache(context, uniqueName).size();

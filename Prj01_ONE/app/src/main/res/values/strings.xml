@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ONE · 一个(Beta)</string>
+    <string name="app_name">ONE · 一个</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -9,4 +9,5 @@
     <string name="chevron_right">&#xe601;</string>
     <string name="arrow_left">&#xe600;</string>
     <string name="save">&#xe603;</string>
+    <string name="share">&#xe604;</string>
 </resources>

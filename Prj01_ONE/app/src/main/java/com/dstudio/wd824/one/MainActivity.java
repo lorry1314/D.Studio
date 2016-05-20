@@ -44,6 +44,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+
 public class MainActivity extends Activity implements View.OnClickListener
 {
 
@@ -71,18 +74,22 @@ public class MainActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-
+        ShareSDK.initSDK(this);
         topBar = (LinearLayout) findViewById(R.id.top_bar);
         tabLayout = (LinearLayout) findViewById(R.id.tab_layout);
         initView();
         selectFrag(1);
     }
 
+    /**
+     * 控件初始化
+     */
     private void initView()
     {
         btnRight = (Button) findViewById(R.id.right_button);
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont.ttf");
         btnRight.setTypeface(iconfont);
+        btnRight.setText(R.string.share);
 
         btnHome = (Button) findViewById(R.id.btn_home);
         btnReading = (Button) findViewById(R.id.btn_reading);
@@ -127,6 +134,10 @@ public class MainActivity extends Activity implements View.OnClickListener
 
     }
 
+    /**
+     * fragment切换
+     * @param i
+     */
     public void selectFrag(int i)
     {
         setDefaultIcon();
@@ -176,6 +187,10 @@ public class MainActivity extends Activity implements View.OnClickListener
         btnAbout.setTextColor(getResources().getColor(R.color.btn_normal));
     }
 
-
-
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        ShareSDK.stopSDK(this);
+    }
 }

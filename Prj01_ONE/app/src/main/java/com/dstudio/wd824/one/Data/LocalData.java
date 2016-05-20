@@ -14,6 +14,12 @@ import java.io.InputStream;
  */
 public class LocalData
 {
+    /**
+     * 将JSON数据写入本地文件
+     * @param data 服务器返回的JSON数据
+     * @param which 哪一天的数据
+     * @param context
+     */
     public static void save(String data, String which, Context context)
     {
         try
@@ -32,6 +38,12 @@ public class LocalData
         }
     }
 
+    /**
+     * 读取本地JSON数据
+     * @param which  哪一天的数据
+     * @param context
+     * @return
+     */
     public static String load(String which, Context context)
     {
         FileInputStream inStream;
@@ -58,6 +70,7 @@ public class LocalData
 
     }
 
+    // 删除本地所有数据
     public static void delete(Context context)
     {
         String[] fileList = context.fileList();
