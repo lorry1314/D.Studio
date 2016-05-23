@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
+        android:paddingBottom="5dp"
         android:orientation="horizontal">
 
         <TextView
@@ -26,12 +27,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/txt_aqi"
+            android:paddingLeft="10dp"
             style="@style/title_weather"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/txt_qlty"
+            android:paddingLeft="10dp"
             style="@style/title_weather"/>
 
 
@@ -40,7 +43,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="38dp"
         android:layout_marginRight="20dp"
         android:orientation="horizontal">
 
@@ -54,7 +57,9 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            style="@style/text_weather"
+            android:id="@+id/txt_pm25"/>
 
         <TextView
             android:layout_width="0dp"
@@ -67,7 +72,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="@style/text_weather"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:id="@+id/txt_pm10"/>
 
         <TextView
             android:layout_width="0dp"
@@ -80,14 +86,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="@style/text_weather"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:id="@+id/txt_so2"/>
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="38dp"
         android:layout_marginRight="20dp"
         android:orientation="horizontal">
 
@@ -102,7 +109,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             style="@style/text_weather"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:id="@+id/txt_no2"/>
 
         <TextView
             android:layout_width="0dp"
@@ -115,7 +123,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="@style/text_weather"/>
+            style="@style/text_weather"
+            android:id="@+id/txt_co"/>
 
         <TextView
             android:layout_width="0dp"
@@ -128,7 +137,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            style="@style/text_weather"/>
+            style="@style/text_weather"
+            android:id="@+id/txt_o3"/>
 
     </LinearLayout>
 

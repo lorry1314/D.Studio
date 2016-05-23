@@ -20,6 +20,12 @@ public class MyDatabaseHelper extends SQLiteOpenHelper
             "city_name text," +
             "province text)";
 
+    public static final String CREATE_WT = "create table Weather (" +
+            "_id integer primary key autoincrement," +
+            "wt_code text," +
+            "wt_name text," +
+            "wt_icon text)";
+
     public MyDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version)
     {
         super(context, name, factory, version);
@@ -30,7 +36,8 @@ public class MyDatabaseHelper extends SQLiteOpenHelper
     public void onCreate(SQLiteDatabase sqLiteDatabase)
     {
         sqLiteDatabase.execSQL(CREATE_CITY);
-        Toast.makeText(mContent, "City表创建成功", Toast.LENGTH_SHORT).show();
+        sqLiteDatabase.execSQL(CREATE_WT);
+        Toast.makeText(mContent, "创建成功", Toast.LENGTH_SHORT).show();
     }
 
     @Override

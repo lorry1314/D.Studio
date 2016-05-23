@@ -9,6 +9,7 @@ import com.baidu.location.Poi;
 import java.util.List;
 
 /**
+ * 测试定位用
  * Created by wd824 on 2016/5/14.
  */
 public class MyLocationListener implements BDLocationListener

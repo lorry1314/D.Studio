@@ -12,15 +12,24 @@
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.6"
         android:layout_gravity="center"
         android:id="@+id/txt_date"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.6"
+        android:layout_marginRight="5dp"
+        android:id="@+id/wt_icon"
+        android:layout_gravity="center"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center"
+        android:singleLine="true"
         android:id="@+id/txt_daily_wt"/>
 
     <TextView

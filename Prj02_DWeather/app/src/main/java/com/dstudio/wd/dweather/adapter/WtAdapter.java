@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -57,6 +58,7 @@ public class WtAdapter extends BaseAdapter
             viewHolder.txtDailyWt = (TextView) view.findViewById(R.id.txt_daily_wt);
             viewHolder.txtMaxTmp = (TextView) view.findViewById(R.id.txt_max);
             viewHolder.txtMinTmp = (TextView) view.findViewById(R.id.txt_min);
+            viewHolder.imgWtIcon = (ImageView) view.findViewById(R.id.wt_icon);
             view.setTag(viewHolder);
         }
         else
@@ -67,6 +69,7 @@ public class WtAdapter extends BaseAdapter
         viewHolder.txtDailyWt.setText(dailyData.get(i).getTxtDailyWt());
         viewHolder.txtMaxTmp.setText(dailyData.get(i).getTxtMaxTmp());
         viewHolder.txtMinTmp.setText(dailyData.get(i).getTxtMinTmp());
+        viewHolder.imgWtIcon.setImageBitmap(dailyData.get(i).getImgWtIcon());
         return view;
     }
 
@@ -76,5 +79,6 @@ public class WtAdapter extends BaseAdapter
         TextView txtDailyWt;
         TextView txtMaxTmp;
         TextView txtMinTmp;
+        ImageView imgWtIcon;
     }
 }

@@ -1,5 +1,7 @@
 package com.dstudio.wd.dweather.adapter;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by wd824 on 2016/5/16.
  */
@@ -9,13 +11,15 @@ public class DailyWt
     private String txtDailyWt;
     private String txtMaxTmp;
     private String txtMinTmp;
+    private Bitmap imgWtIcon;
 
-    public DailyWt(String txtDate, String txtDailyWt, String txtMaxTmp, String txtMinTmp)
+    public DailyWt(String txtDate, Bitmap imgWtIcon, String txtDailyWt, String txtMaxTmp, String txtMinTmp)
     {
         this.txtDate = txtDate;
         this.txtDailyWt = txtDailyWt;
         this.txtMaxTmp = txtMaxTmp;
         this.txtMinTmp = txtMinTmp;
+        this.imgWtIcon = imgWtIcon;
     }
 
     public void setTxtDate(String txtDate)
@@ -38,6 +42,11 @@ public class DailyWt
         this.txtMinTmp = txtMinTmp;
     }
 
+    public void setImgWtIcon(Bitmap imgWtIcon)
+    {
+        this.imgWtIcon = imgWtIcon;
+    }
+
     public String getTxtDate()
     {
         return txtDate;
@@ -56,5 +65,10 @@ public class DailyWt
     public String getTxtMinTmp()
     {
         return txtMinTmp;
+    }
+
+    public Bitmap getImgWtIcon()
+    {
+        return imgWtIcon;
     }
 }

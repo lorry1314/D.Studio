@@ -31,7 +31,8 @@
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">
         </service>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+                  android:persistableMode="persistAcrossReboots">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

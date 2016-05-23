@@ -8,16 +8,34 @@ import android.database.sqlite.SQLiteDatabase;
  */
 public class City
 {
-    private MyDatabaseHelper myDatabaseHelper;
+    private MyDatabaseHelper dbHelper;
 
-    public City(MyDatabaseHelper myDatabaseHelper)
+    public City(MyDatabaseHelper dbHelper)
     {
-        this.myDatabaseHelper = myDatabaseHelper;
+        this.dbHelper = dbHelper;
     }
 
     public Cursor queryCity(String cityName)
     {
-        SQLiteDatabase db = myDatabaseHelper.getReadableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
         return db.rawQuery("select _id, city_name from City where city_name like '%" + cityName + "%' limit 10", null);
+    }
+
+    /**
+     * 查询城市ID
+     * @return
+     */
+    public String queryCityId(String cityName)
+    {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select city_id from City where city_name = ?", new String[]{cityName});
+        if (cursor.moveToFirst())
+        {
+            return cursor.getString(cursor.getColumnIndex("city_id"));
+        }
+        else
+        {
+            return null;
+        }
     }
 }
