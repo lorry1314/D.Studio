@@ -65,6 +65,9 @@ public class MainActivity extends Activity implements View.OnClickListener
     private Context mContext;
     private MyDatabaseHelper dbHelper;
 
+    private FgMain fgMain;
+    private FragmentTransaction transaction;
+
     public LocationClient mLocationClient;
     private String lcCity;
 
@@ -210,8 +213,9 @@ public class MainActivity extends Activity implements View.OnClickListener
                 Log.d("debug", "Baidu Start！");
                 Log.i("BaiduMap", bdLocation.getCity());
                 lcCity = bdLocation.getCity().replace("市", "");
-                showWeather(lcCity);
                 showCityList(lcCity);
+                showWeather(lcCity);
+
                 topTitle.setText(lcCity);
                 SharedPreferences.Editor editor = getSharedPreferences("city", MODE_PRIVATE).edit();
                 editor.putString("city", lcCity);
@@ -242,9 +246,9 @@ public class MainActivity extends Activity implements View.OnClickListener
             bundle.putString("key", cityId);
         }
         bundle.putBoolean("isFirst", firstFlag);
-        FgMain fgMain = new FgMain();
+        fgMain = new FgMain();
+        transaction = getFragmentManager().beginTransaction();
         fgMain.setArguments(bundle);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.frag_layout, fgMain);
         transaction.commit();
         pgbar.setVisibility(View.VISIBLE);

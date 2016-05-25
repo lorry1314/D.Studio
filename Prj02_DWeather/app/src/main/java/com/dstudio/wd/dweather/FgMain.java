@@ -81,8 +81,6 @@ public class FgMain extends Fragment
     private final static int SHOW_NOW = 1;
     private final static int SHOW_AQI = 2;
     private final static int SAVE_PARA = 3;
-    private final static int SHOW_TODAY = 4;
-    private final static int SHOW_DAILY = 5;
     private final static String KEY = "478855289bf843bea01cbbf983887878";
 
     private Handler handler = new Handler()
@@ -116,15 +114,6 @@ public class FgMain extends Fragment
                 case SAVE_PARA:
                     LocalData.save((String) msg.obj, strParam, mContext);
                     break;
-                case SHOW_TODAY:
-                    String[] todayWts = (String[]) msg.obj;
-                    txtTodayWt.setText(todayWts[0]);
-                    txtTodayTmp.setText(MessageFormat.format("{0}~{1}℃", todayWts[1], todayWts[2]));
-                    break;
-                case SHOW_DAILY:
-                    wtAdapter.notifyDataSetChanged();
-                    listDaily.setAdapter(wtAdapter);
-                    break;
                 default:
                     break;
             }
@@ -135,6 +124,7 @@ public class FgMain extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        Log.e("fg", "onCreatView");
         View view = inflater.inflate(R.layout.fg_main, container, false);
 
         mContext = getActivity();
@@ -143,6 +133,8 @@ public class FgMain extends Fragment
         String[] fileList = mContext.fileList();
         File file = getActivity().getFileStreamPath(getArguments().getString("key") + ".txt");
         Log.d("debug", file.exists() + "");
+
+
         if (!file.exists())
         {
             sendWtRequest(getArguments().getString("key"));
@@ -157,9 +149,10 @@ public class FgMain extends Fragment
                     Log.d("debug", getArguments().getString("key"));
                     parseJson(LocalData.load(getArguments().getString("key"), mContext));
                     Log.d("debug", "本地数据");
+                    sendWtRequest(getArguments().getString("key"));
                 }
             }).start();
-            sendWtRequest(getArguments().getString("key"));
+
         }
         return view;
     }
@@ -352,65 +345,52 @@ public class FgMain extends Fragment
      */
     public void parseDailyData(final JSONArray dailyFcst)
     {
-        /*
+
         getActivity().runOnUiThread(new Runnable()
         {
             @Override
             public void run()
             {
+
                 if (dailyData.size() > 0)
                 {
                     dailyData.removeAll(dailyData);
                     wtAdapter.notifyDataSetChanged();
+                    listDaily.setAdapter(wtAdapter);
+                }
+
+
+                try
+                {
+                    Weather weather = new Weather(dbHelper);
+                    for (int i = 0; i < dailyFcst.length(); i++)
+                    {
+                        String txtDate = dailyFcst.getJSONObject(i).getString("date").substring(5);   // 日期
+                        JSONObject dateCond = dailyFcst.getJSONObject(i).getJSONObject("cond");
+                        String txtDay = dateCond.getString("txt_d");  // 白天天气
+                        String txtNight = dateCond.getString("txt_n"); // 晚间天气
+                        JSONObject dateTmp = dailyFcst.getJSONObject(i).getJSONObject("tmp");
+                        String minTmp = dateTmp.getString("min");  // 最低气温
+                        String maxTmp = dateTmp.getString("max");  // 最高气温
+                        String txt = txtDay.equals(txtNight) ? txtDay : txtDay + "转" + txtNight;
+                        if (i == 0)
+                        {
+                            txtTodayWt.setText(txt);
+                            txtTodayTmp.setText(MessageFormat.format("{0}~{1}℃", minTmp, maxTmp));
+                        }
+                        Log.d("debug", txtDay + ", " + weather.queryWt(txtDay) );
+                        Bitmap wtIcon = LocalCache.readImgCache(mContext, weather.queryWt(txtDay), "ICON");
+                        Log.d("debug", (wtIcon == null) + "");
+                        dailyData.add(new DailyWt(txtDate, wtIcon, txt, maxTmp, minTmp));
+                    }
+                    listDaily.setAdapter(wtAdapter);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
                 }
             }
         });
-        */
-
-        Message msg = new Message();
-        msg.what = SHOW_DAILY;
-        if (dailyData.size() > 0)
-        {
-            dailyData.removeAll(dailyData);
-            msg.obj = null;
-            handler.sendMessage(msg);
-        }
-
-        try
-        {
-            Weather weather = new Weather(dbHelper);
-            for (int i = 0; i < dailyFcst.length(); i++)
-            {
-                String txtDate = dailyFcst.getJSONObject(i).getString("date").substring(5);   // 日期
-                JSONObject dateCond = dailyFcst.getJSONObject(i).getJSONObject("cond");
-                String txtDay = dateCond.getString("txt_d");  // 白天天气
-                String txtNight = dateCond.getString("txt_n"); // 晚间天气
-                JSONObject dateTmp = dailyFcst.getJSONObject(i).getJSONObject("tmp");
-                String minTmp = dateTmp.getString("min");  // 最低气温
-                String maxTmp = dateTmp.getString("max");  // 最高气温
-                String txt = txtDay.equals(txtNight) ? txtDay : txtDay + "转" + txtNight;
-                if (i == 0)
-                {
-                    Message message = new Message();
-                    message.what = SHOW_TODAY;
-                    message.obj = new String[] {txt, minTmp, maxTmp};
-                    handler.sendMessage(message);
-                }
-                Log.d("debug", txtDay + ", " + weather.queryWt(txtDay) );
-                Bitmap wtIcon = LocalCache.readImgCache(mContext, weather.queryWt(txtDay), "ICON");
-                Log.d("debug", (wtIcon == null) + "");
-                dailyData.add(new DailyWt(txtDate, wtIcon, txt, maxTmp, minTmp));
-            }
-            wtAdapter.notifyDataSetChanged();
-            Message message = new Message();
-            message.what = SHOW_DAILY;
-            message.obj = null;
-            handler.sendMessage(message);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -451,6 +431,7 @@ public class FgMain extends Fragment
                     {
                         sugData.removeAll(sugData);
                         sugAdapter.notifyDataSetChanged();
+                        listSug.setAdapter(sugAdapter);
                     }
                     sugData.add(new Suggestion(R.drawable.cfm, " 舒适度：", comfBrf, comfTxt));
                     sugData.add(new Suggestion(R.drawable.xiche, " 洗车指数：", cwBrf, cwTxt));
@@ -459,7 +440,7 @@ public class FgMain extends Fragment
                     sugData.add(new Suggestion(R.drawable.yundong, " 运动指数：", sportBrf, sportTxt));
                     sugData.add(new Suggestion(R.drawable.lvyou, " 旅游指数：", travBrf, travTxt));
                     sugData.add(new Suggestion(R.drawable.fangshai, " 防晒指数：", uvBrf, uvTxt));
-                    sugAdapter.notifyDataSetChanged();
+                    // sugAdapter.notifyDataSetChanged();
                     listSug.setAdapter(sugAdapter);
                 }
             });
@@ -481,5 +462,33 @@ public class FgMain extends Fragment
                 Toast.makeText(mContext, "出错了.. :(", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        Log.e("fg", "onCreat");
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        Log.e("fg", "onResume");
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        Log.e("fg", "onPause");
+    }
+
+    @Override
+    public void onDestroyView()
+    {
+        super.onDestroyView();
+        Log.e("fg", "onDestoryView");
     }
 }
