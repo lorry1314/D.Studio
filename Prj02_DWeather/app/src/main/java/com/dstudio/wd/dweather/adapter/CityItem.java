@@ -37,4 +37,13 @@ public class CityItem
         return cityTmp;
     }
 
+    public void setCityTmp(String cityTmp)
+    {
+        this.cityTmp = cityTmp;
+    }
+
+    public void setCityName(String cityName)
+    {
+        this.cityName = cityName;
+    }
 }

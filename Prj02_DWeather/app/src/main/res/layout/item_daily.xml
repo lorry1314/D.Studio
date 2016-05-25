@@ -20,7 +20,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.6"
-        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
         android:id="@+id/wt_icon"
         android:layout_gravity="center"/>
 

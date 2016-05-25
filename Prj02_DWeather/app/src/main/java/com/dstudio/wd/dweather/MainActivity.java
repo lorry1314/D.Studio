@@ -2,21 +2,22 @@ package com.dstudio.wd.dweather;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -38,14 +39,13 @@ import com.dstudio.wd.dweather.database.MyDatabaseHelper;
 import com.dstudio.wd.dweather.database.OriginalData;
 import com.dstudio.wd.dweather.http.HttpCallbackListener;
 import com.dstudio.wd.dweather.http.HttpUtil;
+import com.dstudio.wd.dweather.localdata.LocalData;
 import com.dstudio.wd.dweather.location.Location;
 import com.dstudio.wd.dweather.location.MyLocationListener;
-
+import com.dstudio.wd.dweather.tools.Judgement;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements View.OnClickListener
     private CityAdapter cityAdapter = null;
     private ListView listCity;
 
-    private boolean flag = false;   // 初次启动标志
+    private boolean firstFlag = false;   // 初次启动标志
     private boolean needRec = false;
 
     @Override
@@ -83,9 +83,28 @@ public class MainActivity extends Activity implements View.OnClickListener
         setContentView(R.layout.activity_main);
         mContext = MainActivity.this;
         dbHelper = new MyDatabaseHelper(this, "CityInfo.db", null, 1);
-        bindView();
-        createOriData();
-        initLocationClient();
+        bindView();           // 初始化控件
+        setViewListener();
+        if (new Judgement(mContext).isNetworkAvailable())
+        {
+            pgbar.setVisibility(View.VISIBLE);
+            createOriData();      // 若为首次启动，建立本地数据库
+            initLocationClient(); // 定位初始化
+        }
+        else
+        {
+            /*
+             当前无网络时，由SharedPreferences保存的城市名称获取本地数据
+             */
+            Toast.makeText(mContext, "当前无网络 :(", Toast.LENGTH_LONG).show();
+            String savedCityName = getSharedPreferences("city", MODE_PRIVATE).getString("city", "");
+            if (!savedCityName.equals(""))
+            {
+                showWeather(savedCityName);
+                topTitle.setText(savedCityName);
+            }
+        }
+        needRec = true;
     }
 
     /**
@@ -96,18 +115,7 @@ public class MainActivity extends Activity implements View.OnClickListener
         needRec = true;
         mDrawerLayout = (DrawerLayout) findViewById(R.id.main_layout);
         mDrawerLayout.setScrimColor(getResources().getColor(R.color.white));
-        mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener()
-        {
-            @Override
-            public void onDrawerOpened(View drawerView)
-            {
-                if (needRec)
-                {
-                    recoverCity();
-                    needRec = false;
-                }
-            }
-        });
+
         leftDrawer = (LinearLayout) findViewById(R.id.left_drawer);
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
         pgbar = (ProgressBar) findViewById(R.id.progress_bar);
@@ -115,6 +123,7 @@ public class MainActivity extends Activity implements View.OnClickListener
         btnLeft = (Button) findViewById(R.id.left_button);
         btnRight = (Button) findViewById(R.id.right_button);
         searchTextView = (AutoCompleteTextView) findViewById(R.id.search_city);
+
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont.ttf");
         btnAddCity = (Button) findViewById(R.id.add_city);
         btnAddCity.setTypeface(iconfont);
@@ -130,6 +139,17 @@ public class MainActivity extends Activity implements View.OnClickListener
         searchTextView.setTypeface(iconfont);
         searchTextView.setHint(R.string.search);
         searchTextView.setAdapter(autoCompleteAdapter);
+
+        cityData = new LinkedList<>();
+        listCity = (ListView) findViewById(R.id.list_city);
+        cityAdapter = new CityAdapter((LinkedList<CityItem>) cityData, mContext);
+    }
+
+    /**
+     * 设置控件监听事件
+     */
+    public void setViewListener()
+    {
         searchTextView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -141,18 +161,23 @@ public class MainActivity extends Activity implements View.OnClickListener
             }
         });
 
-        cityData = new LinkedList<CityItem>();
-        listCity = (ListView) findViewById(R.id.list_city);
-        cityAdapter = new CityAdapter((LinkedList<CityItem>) cityData, mContext);
         listCity.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
-                TextView txtCityName = (TextView) view.findViewById(R.id.item_city_name);
-                showWeather(txtCityName.getText().toString());
-                topTitle.setText(txtCityName.getText().toString());
-                mDrawerLayout.closeDrawer(leftDrawer);
+                if (new Judgement(mContext).isNetworkAvailable())
+                {
+                    TextView txtCityName = (TextView) view.findViewById(R.id.item_city_name);
+                    showWeather(txtCityName.getText().toString());
+                    topTitle.setText(txtCityName.getText().toString());
+                    // topTitle.setCompoundDrawables(null, null, null, null);
+                    mDrawerLayout.closeDrawer(leftDrawer);
+                }
+                else
+                {
+                    Toast.makeText(mContext, "当前无网络 :(", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -161,11 +186,12 @@ public class MainActivity extends Activity implements View.OnClickListener
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l)
             {
-                ((LinkedList<CityItem>) cityData).remove(i);
+                cityData.remove(i);
                 cityAdapter.notifyDataSetChanged();
                 return false;
             }
         });
+
 
     }
 
@@ -175,20 +201,24 @@ public class MainActivity extends Activity implements View.OnClickListener
     public void initLocationClient()
     {
         mLocationClient = new LocationClient(getApplicationContext());
+
         mLocationClient.registerLocationListener(new BDLocationListener()
         {
             @Override
             public void onReceiveLocation(BDLocation bdLocation)
             {
+                Log.d("debug", "Baidu Start！");
                 Log.i("BaiduMap", bdLocation.getCity());
                 lcCity = bdLocation.getCity().replace("市", "");
-                Log.d("debug", "initLocationClient方法中调用了showWeather");
                 showWeather(lcCity);
                 showCityList(lcCity);
                 topTitle.setText(lcCity);
-
+                SharedPreferences.Editor editor = getSharedPreferences("city", MODE_PRIVATE).edit();
+                editor.putString("city", lcCity);
+                editor.commit();
             }
         });
+
         new Location(mLocationClient).initLocation();
         mLocationClient.start();
     }
@@ -199,10 +229,9 @@ public class MainActivity extends Activity implements View.OnClickListener
      */
     public void showWeather(String cityName)
     {
-        FgMain fgMain = new FgMain();
         Bundle bundle = new Bundle();
         // 若为首次启动，使用城市名称请求数据，否则使用ID
-        if (flag)
+        if (firstFlag)
         {
             bundle.putString("key", cityName);
         }
@@ -212,11 +241,13 @@ public class MainActivity extends Activity implements View.OnClickListener
             Log.d("debug", cityName + " 的ID是：" + cityId);
             bundle.putString("key", cityId);
         }
+        bundle.putBoolean("isFirst", firstFlag);
+        FgMain fgMain = new FgMain();
         fgMain.setArguments(bundle);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.replace(R.id.frag_layout, fgMain).commit();
+        transaction.replace(R.id.frag_layout, fgMain);
+        transaction.commit();
         pgbar.setVisibility(View.VISIBLE);
-        scrollView.smoothScrollTo(0, 0);
     }
 
     public void showCityList(final String cityName)
@@ -224,7 +255,7 @@ public class MainActivity extends Activity implements View.OnClickListener
         String KEY = getString(R.string.key);
         String parm;
         String url;
-        if (flag)
+        if (firstFlag)
         {
             parm = cityName;
             url = getString(R.string.wt_api_no_parm) + "city=" + parm + "&key=" + KEY;
@@ -234,7 +265,7 @@ public class MainActivity extends Activity implements View.OnClickListener
             parm = new City(dbHelper).queryCityId(cityName);
             url = getString(R.string.wt_api_no_parm) + "cityid=" + parm + "&key=" + KEY;
         }
-        if (!parm.equals(null))
+        if (!parm.equals(""))
         {
             Log.d("debug", "ok!");
             HttpUtil.sendHttpRequest(url, new HttpCallbackListener()
@@ -248,15 +279,21 @@ public class MainActivity extends Activity implements View.OnClickListener
                         JSONArray datas = jsonObject.getJSONArray("HeWeather data service 3.0");
                         JSONObject nowWeather = datas.getJSONObject(0).getJSONObject("now");
                         final String txtTmp = nowWeather.getString("tmp") + "℃";
-
                         runOnUiThread(new Runnable()
                         {
                             @Override
                             public void run()
                             {
-                                String cityTmp  = txtTmp;
-                                cityData.add(new CityItem(cityName, cityTmp));
+                                cityData.add(new CityItem(cityName, txtTmp));
+                                cityAdapter.notifyDataSetChanged();
                                 listCity.setAdapter(cityAdapter);
+                                if (needRec)
+                                {
+                                    recoverCity();  // 恢复已添加城市列表
+                                    needRec = false;
+                                    refreshData(1);
+                                }
+
                             }
                         });
                     }
@@ -273,9 +310,6 @@ public class MainActivity extends Activity implements View.OnClickListener
                 }
             });
         }
-        else
-        {
-        }
     }
 
     /**
@@ -283,18 +317,17 @@ public class MainActivity extends Activity implements View.OnClickListener
      */
     public void createOriData()
     {
-        if(judgeVersion())
+        if(new Judgement(mContext).judgeVersion())
         {
-            flag = true;
+            firstFlag = true;
             String CITY_API = getString(R.string.city_api);
-
             dbHelper.getWritableDatabase();
             HttpUtil.sendHttpRequest(CITY_API, new HttpCallbackListener()
             {
                 @Override
                 public void onFinish(String response)
                 {
-                    new OriginalData(dbHelper, mContext, lcCity).parseJSONForCity(response);
+                    new OriginalData(dbHelper, mContext).parseJSONForCity(response);
                 }
 
                 @Override
@@ -311,7 +344,7 @@ public class MainActivity extends Activity implements View.OnClickListener
                 public void onFinish(String response)
                 {
                     Log.d("debug", "ICON, OK");
-                    new OriginalData(dbHelper, mContext, lcCity).parseJSONForWt(response);
+                    new OriginalData(dbHelper, mContext).parseJSONForWt(response);
                 }
 
                 @Override
@@ -323,39 +356,6 @@ public class MainActivity extends Activity implements View.OnClickListener
         }
     }
 
-    /**
-     * 判断是否为第一次启动
-     * @return true-第一次启动
-     */
-    public boolean judgeVersion()
-    {
-        float nowVersion = 0;
-        try
-        {
-            nowVersion = mContext.getPackageManager().getPackageInfo(mContext.getPackageName(), 0).versionCode;
-        }
-        catch (PackageManager.NameNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-
-        SharedPreferences sp = getSharedPreferences("welcomeInfo", MODE_PRIVATE);
-        float spVersion = sp.getFloat("spVersion", 0);
-        Log.i("Version", "最新版本号" + nowVersion + ", sp版本号" + spVersion);
-
-        if (nowVersion > spVersion)
-        {
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putFloat("spVersion", nowVersion);
-            editor.commit();
-            Toast.makeText(mContext, "第一次 呵呵", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
 
     @Override
     public void onClick(View view)
@@ -381,7 +381,7 @@ public class MainActivity extends Activity implements View.OnClickListener
     }
 
     /**
-     * 活动销毁，保存抽屉中已添加的城市名称
+     * 活动销毁，保存已添加的城市名称
      */
     @Override
     protected void onDestroy()
@@ -394,12 +394,13 @@ public class MainActivity extends Activity implements View.OnClickListener
         {
             editor.putString("city_" + i, cityData.get(i).getCityName());
             Log.d("debug", "saved：" + cityData.get(i).getCityName());
+            editor.putString("city_tmp_" + i, cityData.get(i).getCityTmp());
         }
         editor.commit();
     }
 
     /**
-     * 恢复城市名称
+     * 恢复城市列表
      */
     public void recoverCity()
     {
@@ -408,7 +409,99 @@ public class MainActivity extends Activity implements View.OnClickListener
         for (int i = 1; i < cityNum; i++)
         {
             Log.d("debug", "recover city_" + i + ", " + pref.getString("city_" + i, ""));
-            showCityList(pref.getString("city_" + i, ""));
+            // showCityList(pref.getString("city_" + i, ""));
+            cityData.add(new CityItem(pref.getString("city_" + i, ""), pref.getString("city_tmp_" + i, "")));
+            cityAdapter.notifyDataSetChanged();
+            listCity.setAdapter(cityAdapter);
         }
     }
+
+    /**
+     * 刷新城市列表数据
+     * @param start ListView起始位置
+     */
+    public void refreshData(int start)
+    {
+        int dataNum = cityAdapter.getCount();
+        Log.d("debug", "number is" + dataNum);
+        for (int i = start; i < dataNum; i++)
+        {
+            Log.d("debug", cityData.get(i).getCityName());
+            getCityTmp(cityData.get(i).getCityName(), i);
+        }
+    }
+
+    /**
+     * 获取实时温度
+     * @param cityName
+     * @param position
+     */
+    public void getCityTmp(final String cityName, final int position)
+    {
+        String KEY = getString(R.string.key);
+        String url = getString(R.string.wt_api_no_parm) + "city=" + cityName + "&key=" + KEY;
+        if (!cityName.equals(""))
+        {
+            Log.d("debug", "ok!");
+            HttpUtil.sendHttpRequest(url, new HttpCallbackListener()
+            {
+                @Override
+                public void onFinish(String response)
+                {
+                    try
+                    {
+                        JSONObject jsonObject = new JSONObject(response);
+                        JSONArray datas = jsonObject.getJSONArray("HeWeather data service 3.0");
+                        JSONObject nowWeather = datas.getJSONObject(0).getJSONObject("now");
+                        final String txtTmp = nowWeather.getString("tmp") + "℃";
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                cityData.get(position).setCityTmp(txtTmp);
+                                cityAdapter.notifyDataSetChanged();
+                                listCity.setAdapter(cityAdapter);
+                            }
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                Toast.makeText(mContext, "出错了..", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onError(Exception e)
+                {
+                    runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            Toast.makeText(mContext, "出错了..", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    /*
+    public void setLocationSymbol()
+    {
+        Drawable drawable = getResources().getDrawable(R.drawable.place);
+        assert drawable != null;
+        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+        topTitle.setCompoundDrawables(drawable, null, null, null);
+    }
+    */
 }

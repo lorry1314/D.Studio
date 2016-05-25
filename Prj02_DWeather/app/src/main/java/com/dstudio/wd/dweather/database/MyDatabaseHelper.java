@@ -37,7 +37,6 @@ public class MyDatabaseHelper extends SQLiteOpenHelper
     {
         sqLiteDatabase.execSQL(CREATE_CITY);
         sqLiteDatabase.execSQL(CREATE_WT);
-        Toast.makeText(mContent, "创建成功", Toast.LENGTH_SHORT).show();
     }
 
     @Override

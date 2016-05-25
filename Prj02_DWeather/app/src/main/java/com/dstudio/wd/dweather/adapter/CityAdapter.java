@@ -2,9 +2,12 @@ package com.dstudio.wd.dweather.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Animatable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
@@ -47,7 +50,7 @@ public class CityAdapter extends BaseAdapter
     @Override
     public View getView(int i, View view, ViewGroup viewGroup)
     {
-        ViewHolder viewHolder = null;
+        ViewHolder viewHolder;
         if (view == null)
         {
             view = LayoutInflater.from(mContext).inflate(R.layout.item_city, viewGroup, false);
@@ -55,9 +58,8 @@ public class CityAdapter extends BaseAdapter
             viewHolder.txtCity = (TextView) view.findViewById(R.id.item_city_name);
             viewHolder.txtTmp = (TextView) view.findViewById(R.id.item_city_tmp);
             Typeface fzltxh = Typeface.createFromAsset(mContext.getAssets(), "fzltxh.TTF");
-            Typeface fzlt = Typeface.createFromAsset(mContext.getAssets(), "fzlt.ttf");
             viewHolder.txtTmp.setTypeface(fzltxh);
-            viewHolder.txtCity.setTypeface(fzlt);
+            viewHolder.txtCity.setTypeface(fzltxh);
             view.setTag(viewHolder);
         }
         else
@@ -69,6 +71,7 @@ public class CityAdapter extends BaseAdapter
         viewHolder.txtTmp.setText(mData.get(i).getCityTmp());
         return view;
     }
+
 
     static class ViewHolder
     {

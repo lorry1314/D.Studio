@@ -18,13 +18,11 @@ public class OriginalData
 {
     private MyDatabaseHelper dbHelper;
     private Context mContext;
-    private String cityName;
 
-    public OriginalData(MyDatabaseHelper dbHelper, Context mContext, String cityName)
+    public OriginalData(MyDatabaseHelper dbHelper, Context mContext)
     {
         this.dbHelper = dbHelper;
         this.mContext = mContext;
-        this.cityName = cityName;
     }
 
     /**
