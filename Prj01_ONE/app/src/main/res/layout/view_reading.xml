@@ -43,6 +43,7 @@
             android:textSize="16sp"
             android:gravity="left"/>
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,6 +51,17 @@
             android:textSize="10sp"
             android:textColor="#ABABAB"
             android:paddingRight="15dp"/>
+
+        <!--
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/save_reading"
+            android:background="#0000"
+            android:text="保存到本地"/>
+
+            -->
 
     </LinearLayout>
 
@@ -76,5 +88,12 @@
         android:textColor="#ababab"
         android:paddingLeft="10dp"
         android:paddingBottom="10dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="#CFCFCF"/>
+
+
 
 </LinearLayout>

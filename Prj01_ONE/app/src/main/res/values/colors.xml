@@ -11,4 +11,7 @@
 
     <color name="btn_normal">#a9b7b7</color>
     <color name="btn_picked">#33475f</color>
+
+    <color name="transparent">#0000</color>
+    <color name="white">#FFF</color>
 </resources>

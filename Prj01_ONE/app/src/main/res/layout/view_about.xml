@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ver"
-        android:text="V 1.0"
+        android:text="V 1.1"
         android:textStyle="italic"
         android:textSize="20sp"
         android:layout_below="@+id/logo"

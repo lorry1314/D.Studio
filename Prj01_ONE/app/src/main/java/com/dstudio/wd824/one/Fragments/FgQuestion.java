@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.dstudio.wd824.one.data.HttpCallbackListener;
 import com.dstudio.wd824.one.data.HttpUtil;
 import com.dstudio.wd824.one.data.LocalData;
 import com.dstudio.wd824.one.R;
+import com.dstudio.wd824.one.entity.Question;
 
 import org.json.JSONObject;
 
@@ -42,6 +44,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     private Button btnRight;
     private ProgressBar bar;
     private ScrollView scrollView;
+    private View space;
 
     public GestureDetector detector = new GestureDetector(this);
 
@@ -49,7 +52,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     private Boolean flag;
     private String webLink;
 
-    private TextView question;
+    private TextView questionTitle;
     private TextView questionCont;
     private TextView answer;
     private TextView answerCont;
@@ -65,15 +68,15 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         {
             if (msg.what == SHOW_DATA)
             {
-                String[] data = (String[]) msg.obj;
-                question.setText(data[0]);
-                questionCont.setText("\n" + data[1]);
-                answer.setText(data[2]);
-                answerCont.setText("\n" + data[3]);
-                editor.setText(data[4]);
-                praiseNum.setText(data[5]);
-                dayText.setText(data[6]);
-                webLink = data[7];
+                Question question = (Question) msg.obj;
+                questionTitle.setText(question.getTitle());
+                questionCont.setText("\n" + question.getQuesCont());
+                answer.setText(question.getAnswer());
+                answerCont.setText("\n" + question.getAnswCont());
+                editor.setText(question.getEditor());
+                praiseNum.setText(question.getPraiseNum());
+                dayText.setText(question.getTime());
+                webLink = question.getWebLink();
                 bar.setVisibility(View.GONE);
                 scrollView.fullScroll(View.FOCUS_UP);
             }
@@ -84,7 +87,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.view_question, container, false);
+        final View view = inflater.inflate(R.layout.view_question, container, false);
         topTitle = (TextView) getActivity().findViewById(R.id.top_title);
         topTitle.setText("问答");
         btnRight = (Button) getActivity().findViewById(R.id.right_button);
@@ -97,7 +100,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
                 ShareSDK.initSDK(getActivity());
                 OnekeyShare oks = new OnekeyShare();
                 oks.disableSSOWhenAuthorize();
-                oks.setTitle(question.getText().toString());
+                oks.setTitle(questionTitle.getText().toString());
                 oks.setTitleUrl(webLink);
                 oks.setText(questionCont.getText().toString());
                 oks.setUrl(webLink);
@@ -109,6 +112,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
 
         bar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
         scrollView = (ScrollView) getActivity().findViewById(R.id.scroll_view);
+
         scrollView.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -128,7 +132,8 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
             }
         });
 
-        question = (TextView) view.findViewById(R.id.question);
+
+        questionTitle = (TextView) view.findViewById(R.id.question);
         questionCont = (TextView) view.findViewById(R.id.question_cont);
         answer = (TextView) view.findViewById(R.id.answer);
         answerCont = (TextView) view.findViewById(R.id.answer_content);
@@ -201,7 +206,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         {
             JSONObject jsonObject = new JSONObject(result);
             JSONObject questionEntity = new JSONObject(jsonObject.getString("questionAdEntity"));
-            String question = questionEntity.getString("strQuestionTitle");
+            String title = questionEntity.getString("strQuestionTitle");
             String quesCont = questionEntity.getString("strQuestionContent");
             String answer = questionEntity.getString("strAnswerTitle");
             String answCont = questionEntity.getString("strAnswerContent").replace("<br>", "\n").replace("<strong>", "").replace("</strong>", "");
@@ -213,10 +218,10 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
             String time = sdf.format(date);
             String webLink = questionEntity.getString("sWebLk");
 
-            String[] data = {question, quesCont, answer, answCont, editor, praiseNum, time, webLink};
+            Question question = new Question(title, quesCont, answer, answCont, editor, praiseNum, time, webLink);
             Message message = new Message();
             message.what = SHOW_DATA;
-            message.obj = data;
+            message.obj = question;
             handler.sendMessage(message);
         }
         catch (Exception e)
@@ -232,6 +237,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
             e.printStackTrace();
         }
     }
+
 
     @Override
     public boolean onDown(MotionEvent motionEvent)
@@ -266,7 +272,7 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
-        if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
+        if((e2.getY() - e1.getY() > 120) && Math.abs(e2.getX() - e1.getX()) < 80 && flag)
         {
             day = 1;
             sendRequestForQue(day);
@@ -301,4 +307,5 @@ public class FgQuestion extends Fragment implements GestureDetector.OnGestureLis
         Log.d("debug", day + "");
         return false;
     }
+
 }

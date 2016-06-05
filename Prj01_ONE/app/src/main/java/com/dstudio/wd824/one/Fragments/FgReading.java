@@ -2,6 +2,9 @@ package com.dstudio.wd824.one.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -22,6 +25,7 @@ import com.dstudio.wd824.one.data.HttpCallbackListener;
 import com.dstudio.wd824.one.data.HttpUtil;
 import com.dstudio.wd824.one.data.LocalData;
 import com.dstudio.wd824.one.R;
+import com.dstudio.wd824.one.entity.Reading;
 
 import org.json.JSONObject;
 
@@ -45,6 +49,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
     private TextView articleEditor;
     private TextView praiseNum;
     private String webLink;
+    private String imgUrl;
 
     private ProgressBar bar;
     private Button btnRight;
@@ -64,15 +69,15 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
         {
             if(msg.what == SHOW_DATA)
             {
-
-                String[] data = (String[]) msg.obj;
-                articleTitle.setText(data[0]);
-                articleAuther.setText(data[1]);
-                articleContent.setText(data[2]);
-                articleEditor.setText(data[3]);
-                praiseNum.setText(data[4]);
-                dayText.setText(data[5]);
-                webLink = data[6];
+                Reading reading = (Reading) msg.obj;
+                articleTitle.setText(reading.getContTitle());
+                articleAuther.setText(reading.getContAuthor());
+                articleContent.setText(reading.getContent());
+                articleEditor.setText(reading.getEditor());
+                praiseNum.setText(reading.getPraiseNum());
+                dayText.setText(reading.getTime());
+                webLink = reading.getWebLink();
+                imgUrl = reading.getImgUrl();
                 bar.setVisibility(View.GONE);
                 scrollView.fullScroll(View.FOCUS_UP);
             }
@@ -159,7 +164,8 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
 
     public void sendRequestForRd(final int whichDay)
     {
-        final String readingAPI = "http://211.152.49.184:7001/OneForWeb/one/getOneContentInfo?strDate=" + HttpUtil.getCurrentDate("day", whichDay);
+        final String readingAPI = "http://211.152.49.184:7001/OneForWeb/one/getOneContentInfo?strDate="
+                + HttpUtil.getCurrentDate("day", whichDay);
         bar.setVisibility(View.VISIBLE);
 
         HttpUtil.sendHttpRequest(readingAPI, new HttpCallbackListener()
@@ -174,7 +180,7 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
             @Override
             public void onError(Exception e)
             {
-                ((Activity)getActivity()).runOnUiThread(new Runnable()
+                getActivity().runOnUiThread(new Runnable()
                 {
                     @Override
                     public void run()
@@ -209,11 +215,12 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy", Locale.ENGLISH);
             String time = sdf.format(date);
             String webLink = contentEntity.getString("sWebLk");
+            String imgUrl = contentEntity.getString("wImgUrl");
 
-            String[] data = {contTitle, contAuthor, content, editor, praiseNum, time, webLink};
+            Reading reading = new Reading(contTitle, contAuthor, content, editor, praiseNum, time, webLink, imgUrl);
             Message message = new Message();
             message.what = SHOW_DATA;
-            message.obj = data;
+            message.obj = reading;
             handler.sendMessage(message);
         }
         catch (Exception e)
@@ -263,12 +270,12 @@ public class FgReading extends Fragment implements GestureDetector.OnGestureList
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
-        if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
+        if((e2.getY() - e1.getY() > 120) && Math.abs(e2.getX() - e1.getX()) < 100 && flag)
         {
             day = 1;
             sendRequestForRd(day);
         }
-        else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 80)
+        else if(e2.getX() - e1.getX() > 50 && Math.abs(e2.getY() - e1.getY()) < 100)
         {
 
             day++;

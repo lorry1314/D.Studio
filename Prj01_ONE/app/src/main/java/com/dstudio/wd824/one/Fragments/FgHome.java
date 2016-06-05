@@ -9,12 +9,14 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -27,6 +29,7 @@ import com.dstudio.wd824.one.data.HttpUtil;
 import com.dstudio.wd824.one.data.LocalCache;
 import com.dstudio.wd824.one.data.LocalData;
 import com.dstudio.wd824.one.R;
+import com.dstudio.wd824.one.entity.Home;
 
 import org.json.JSONObject;
 
@@ -73,17 +76,18 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
             switch (msg.what)
             {
                 case SHOW_CONTENT:             // 显示文本部分
-                    String[] data = (String[]) msg.obj;
-                    title.setText(data[0]);
-                    author.setText(data[1]);
-                    content.setText(data[2]);
-                    dayText.setText(data[3]);
-                    imgUrl = data[4];
-                    webLink = data[5];
+                    Home home = (Home) msg.obj;
+                    title.setText(home.getStrTitle());
+                    author.setText(home.getStrAuthor());
+                    content.setText(home.getStrContent());
+                    dayText.setText(home.getTime());
+                    imgUrl =home.getImgUrl();
+                    webLink = home.getWebLink();
                     break;
                 case SHOW_IMG:                // 显示图片
                     Bitmap bitmap = (Bitmap) msg.obj;
                     imageView.setImageBitmap(bitmap);
+                    imageView.setAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.zoom_in));
                     bar.setVisibility(View.GONE);
                     break;
                 default:
@@ -262,8 +266,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
             java.util.Date date= java.sql.Date.valueOf(strTime);
             SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy", Locale.ENGLISH);
             String time = sdf.format(date);
-
-            String[] data = {strTitle, strAuthor, strContent, time, imgUrl, webLink};
+            Home home = new Home(strTitle, strAuthor, strContent, time, imgUrl, webLink);
 
             // 图片加载线程
             new Thread(new Runnable()
@@ -293,7 +296,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
 
             Message message = new Message();
             message.what = SHOW_CONTENT;
-            message.obj = data;
+            message.obj = home;
             handler.sendMessage(message);
         }
         catch (Exception e)
@@ -309,6 +312,23 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
             e.printStackTrace();
         }
     }
+
+    /*
+    public void setColor()
+    {
+        imageView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(imageView.getDrawingCache());
+        Log.e("debug", "bitmap isNull?" + (bitmap == null) + "");
+        imageView.setDrawingCacheEnabled(false);
+        Palette palette = Palette.generate(bitmap);
+        Palette.Swatch swatch = palette.getLightVibrantSwatch();
+        if (swatch != null)
+        {
+            scrollView.setBackgroundColor(swatch.getRgb());
+            // content.setTextColor(swatch.getBodyTextColor());
+        }
+    }
+    */
 
     @Override
     public boolean onDown(MotionEvent motionEvent)
@@ -351,7 +371,7 @@ public class FgHome extends Fragment implements GestureDetector.OnGestureListene
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float v, float v1)
     {
-        if((e2.getY() - e1.getY() > 260) && Math.abs(e2.getX() - e1.getX()) < 50 && flag)
+        if((e2.getY() - e1.getY() > 120) && Math.abs(e2.getX() - e1.getX()) < 80 && flag)
         {
             day = 1;
             sendRequestForHome(day);
