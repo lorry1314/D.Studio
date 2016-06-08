@@ -8,12 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +21,13 @@ import com.dstudio.wd.dweather.adapter.DailyWt;
 import com.dstudio.wd.dweather.adapter.SugAdapter;
 import com.dstudio.wd.dweather.adapter.Suggestion;
 import com.dstudio.wd.dweather.adapter.WtAdapter;
-import com.dstudio.wd.dweather.database.MyDatabaseHelper;
 import com.dstudio.wd.dweather.database.Weather;
 import com.dstudio.wd.dweather.http.HttpCallbackListener;
 import com.dstudio.wd.dweather.http.HttpUtil;
 import com.dstudio.wd.dweather.http.LocalCache;
 import com.dstudio.wd.dweather.localdata.LocalData;
+import com.dstudio.wd.dweather.tools.ListViewInScrollView;
+import com.dstudio.wd.dweather.tools.WtImg;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,8 +44,8 @@ import java.util.List;
 public class FgMain extends Fragment
 {
     private Context mContext;
-    private ProgressBar pgbar;
-    private MyDatabaseHelper dbHelper;
+    private DrawerLayout drawerLayout;
+    private TextView txtUpdateSign;
     private String strParam;
 
     private ImageView imgWt;
@@ -55,7 +56,7 @@ public class FgMain extends Fragment
     private TextView txtTodayTmp;
 
     private TextView txtAqiDscb;
-    private TextView txtWindDscb;;
+    private TextView txtWindDscb;
     private TextView txtHum;
 
     private TextView txtAqi;
@@ -78,9 +79,7 @@ public class FgMain extends Fragment
     private WtAdapter wtAdapter = null;
     private ListViewInScrollView listDaily;
 
-    private final static int SHOW_NOW = 1;
-    private final static int SHOW_AQI = 2;
-    private final static int SAVE_PARA = 3;
+    private final static int SAVE_PARA = 1;
     private final static String KEY = "478855289bf843bea01cbbf983887878";
 
     private Handler handler = new Handler()
@@ -90,29 +89,9 @@ public class FgMain extends Fragment
         {
             switch (msg.what)
             {
-                case SHOW_NOW:
-                    String[] nowWeather = (String[]) msg.obj;
-                    txtNowWt.setText(nowWeather[0]);
-                    txtNowDgr.setText(nowWeather[1]);
-                    txtUpdateTime.setText(MessageFormat.format("数据更新时间 {0}", nowWeather[2]));
-                    txtWindDscb.setText(MessageFormat.format("{0} {1}", nowWeather[3], nowWeather[4]));
-                    txtHum.setText(MessageFormat.format("湿度 {0}%", nowWeather[5]));
-                    new WtImg(imgWt).judgeWt(nowWeather[0]);
-                    break;
-                case SHOW_AQI:
-                    String[] aqiDatas = (String[]) msg.obj;
-                    txtAqiDscb.setText(MessageFormat.format("空气质量 {0} {1}", aqiDatas[0], aqiDatas[1]));
-                    txtAqi.setText(aqiDatas[0]);
-                    txtQlty.setText(aqiDatas[1]);
-                    txtPm25.setText(aqiDatas[2]);
-                    txtPm10.setText(aqiDatas[3]);
-                    txtSo2.setText(aqiDatas[4]);
-                    txtNo2.setText(aqiDatas[5]);
-                    txtCo.setText(aqiDatas[6]);
-                    txtO3.setText(aqiDatas[7]);
-                    break;
                 case SAVE_PARA:
                     LocalData.save((String) msg.obj, strParam, mContext);
+                    parseJson((String) msg.obj);
                     break;
                 default:
                     break;
@@ -126,34 +105,23 @@ public class FgMain extends Fragment
     {
         Log.e("fg", "onCreatView");
         View view = inflater.inflate(R.layout.fg_main, container, false);
-
         mContext = getActivity();
-        dbHelper = new MyDatabaseHelper(mContext, "CityInfo.db", null, 1);
         bindView(view);
         String[] fileList = mContext.fileList();
         File file = getActivity().getFileStreamPath(getArguments().getString("key") + ".txt");
-        Log.d("debug", file.exists() + "");
-
-
         if (!file.exists())
         {
             sendWtRequest(getArguments().getString("key"));
         }
         else
         {
-            new Thread(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    Log.d("debug", getArguments().getString("key"));
-                    parseJson(LocalData.load(getArguments().getString("key"), mContext));
-                    Log.d("debug", "本地数据");
-                    sendWtRequest(getArguments().getString("key"));
-                }
-            }).start();
-
+            parseJson(LocalData.load(getArguments().getString("key"), mContext));
+            // pgbar.setVisibility(View.VISIBLE);
+            txtUpdateSign.setVisibility(View.VISIBLE);
+            // imgWt.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.zoom_in));
+            sendWtRequest(getArguments().getString("key"));
         }
+
         return view;
     }
 
@@ -164,7 +132,9 @@ public class FgMain extends Fragment
     public void bindView(View view)
     {
         Typeface fzltxh = Typeface.createFromAsset(getActivity().getAssets(), "fzltxh.TTF");
-        pgbar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
+        drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.main_layout);
+        // pgbar = (ProgressBar) getActivity().findViewById(R.id.progress_bar);
+        txtUpdateSign = (TextView) getActivity().findViewById(R.id.updating);
 
         /* 当前天气相关控件 */
         imgWt = (ImageView) view.findViewById(R.id.img_weather);
@@ -175,7 +145,7 @@ public class FgMain extends Fragment
         txtTodayTmp = (TextView) view.findViewById(R.id.txt_today_tmp);
         txtNowDgr.setTypeface(fzltxh);
         txtNowWt.setTypeface(fzltxh);
-        viewsNow = new View[] {txtNowWt, txtNowDgr, txtUpdateTime, txtTodayWt, txtTodayTmp, pgbar};
+        viewsNow = new View[] {txtNowWt, txtNowDgr, txtUpdateTime, txtTodayWt, txtTodayTmp};
 
         txtAqiDscb = (TextView) view.findViewById(R.id.aqi_describe);
         txtWindDscb = (TextView) view.findViewById(R.id.wind_describe);
@@ -230,10 +200,6 @@ public class FgMain extends Fragment
                     message.what = SAVE_PARA;
                     message.obj = result;
                     handler.sendMessage(message);
-                    Log.d("debug", "网络数据");
-                    parseJson(result);
-                    pgbar.setVisibility(View.GONE);
-                    LocalData.save(result, strParam, mContext);
                 }
 
                 @Override
@@ -273,69 +239,66 @@ public class FgMain extends Fragment
             String windDir = wind.getString("dir");            // 风向
             String windSc = wind.getString("sc") + "级";       // 风力
             String hum = nowWeather.getString("hum");          // 湿度
-            String vis = nowWeather.getString("vis") + "km";   // 能见度
 
-            String[] nowDatas = {txtWeather, txtTmp, updataTime, windDir, windSc, hum, vis};  // 实时天气及今日天气信息
-            Message msgNow = new Message();
-            msgNow.what = SHOW_NOW;
-            msgNow.obj = nowDatas;
-            handler.sendMessage(msgNow);
-
-            if (datas.getJSONObject(0).optString("aqi").equals(""))
-            {
-                String[] aqiDatas = new String[8];
-                Arrays.fill(aqiDatas, "N/A");
-                Message message = new Message();
-                message.what = SHOW_AQI;
-                message.obj = aqiDatas;
-                handler.sendMessage(message);
-            }
-            else
-            {
-                parseAqiData(datas.getJSONObject(0).getJSONObject("aqi"));  // 空气指数
-            }
-
+            txtNowWt.setText(txtWeather);
+            txtNowDgr.setText(txtTmp);
+            txtUpdateTime.setText(MessageFormat.format("数据更新时间 {0}", updataTime));
+            txtWindDscb.setText(MessageFormat.format("{0} {1}", windDir, windSc));
+            txtHum.setText(MessageFormat.format("湿度 {0}%", hum));
+            // 空气质量
+            parseAqiData(datas.getJSONObject(0).optJSONObject("aqi"));
             // 7日天气预报
             JSONArray dailyFcst = datas.getJSONObject(0).getJSONArray("daily_forecast");
             parseDailyData(dailyFcst);
-
             // 生活指数
             parseSugData(datas.getJSONObject(0).getJSONObject("suggestion"));
-
+            // 设置图片以及背景色
+            new WtImg(imgWt, drawerLayout, mContext).judgeWt(txtWeather);
         }
         catch (Exception e)
         {
-            showError();
+            // showError();
             e.printStackTrace();
         }
     }
 
     public void parseAqiData(JSONObject aqiInfo)
     {
+        String[] aqiDatas = new String[8];
         try
         {
-            JSONObject cityAqi = new JSONObject(aqiInfo.getString("city"));
-            String txtAqi = cityAqi.getString("aqi");   // 空气质量指数
-            Log.d("debug", txtAqi);
-            String txtQlty = cityAqi.getString("qlty"); // 空气质量类别
-            String txtCO = cityAqi.getString("co");  // CO 一小时平均值
-            String txtNO2 = cityAqi.getString("no2");  // NO2
-            String txtSO2 = cityAqi.getString("so2");  // SO2
-            String txtO3 = cityAqi.getString("o3"); // O3
-            String txtPm10 = cityAqi.getString("pm10");  // PM10
-            String txtPm25 = cityAqi.getString("pm25");  // PM2.5
-            String[] aqiDatas = {txtAqi, txtQlty, txtPm25, txtPm10, txtSO2, txtNO2, txtCO, txtO3};
-
-            Message message = new Message();
-            message.what = SHOW_AQI;
-            message.obj = aqiDatas;
-            handler.sendMessage(message);
+            if (aqiInfo != null)
+            {
+                Log.d("debug", "解析空气质量");
+                JSONObject cityAqi = new JSONObject(aqiInfo.getString("city"));
+                String aqi = cityAqi.getString("aqi");   // 空气质量指数
+                String qlty = cityAqi.getString("qlty"); // 空气质量类别
+                String co = cityAqi.getString("co");  // CO 一小时平均值
+                String no2 = cityAqi.getString("no2");  // NO2
+                String so2 = cityAqi.getString("so2");  // SO2
+                String o3 = cityAqi.getString("o3"); // O3
+                String pm10 = cityAqi.getString("pm10");  // PM10
+                String pm25 = cityAqi.getString("pm25");  // PM2.5
+                aqiDatas = new String[] {aqi, qlty, pm25, pm10, so2, no2, co, o3};
+            }
+            else
+            {
+                Arrays.fill(aqiDatas, "N/A");
+            }
+            txtAqiDscb.setText(MessageFormat.format("空气质量 {0} {1}", aqiDatas[0], aqiDatas[1]));
+            txtAqi.setText(aqiDatas[0]);
+            txtQlty.setText(aqiDatas[1]);
+            txtPm25.setText(aqiDatas[2]);
+            txtPm10.setText(aqiDatas[3]);
+            txtSo2.setText(aqiDatas[4]);
+            txtNo2.setText(aqiDatas[5]);
+            txtCo.setText(aqiDatas[6]);
+            txtO3.setText(aqiDatas[7]);
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -345,52 +308,44 @@ public class FgMain extends Fragment
      */
     public void parseDailyData(final JSONArray dailyFcst)
     {
-
-        getActivity().runOnUiThread(new Runnable()
+        if (dailyData.size() > 0)
         {
-            @Override
-            public void run()
+            dailyData.removeAll(dailyData);
+            wtAdapter.notifyDataSetChanged();
+            listDaily.setAdapter(wtAdapter);
+        }
+
+        try
+        {
+            Log.d("debug", "解析7天预报");
+            Weather weather = new Weather(mContext);
+            for (int i = 0; i < dailyFcst.length(); i++)
             {
-
-                if (dailyData.size() > 0)
+                String txtDate = dailyFcst.getJSONObject(i).getString("date").substring(5);   // 日期
+                JSONObject dateCond = dailyFcst.getJSONObject(i).getJSONObject("cond");
+                String txtDay = dateCond.getString("txt_d");  // 白天天气
+                String txtNight = dateCond.getString("txt_n"); // 晚间天气
+                JSONObject dateTmp = dailyFcst.getJSONObject(i).getJSONObject("tmp");
+                String minTmp = dateTmp.getString("min");  // 最低气温
+                String maxTmp = dateTmp.getString("max");  // 最高气温
+                String txt = txtDay.equals(txtNight) ? txtDay : txtDay + "转" + txtNight;
+                if (i == 0)
                 {
-                    dailyData.removeAll(dailyData);
-                    wtAdapter.notifyDataSetChanged();
-                    listDaily.setAdapter(wtAdapter);
+                    txtTodayWt.setText(txt);
+                    txtTodayTmp.setText(MessageFormat.format("{0}~{1}℃", minTmp, maxTmp));
                 }
-
-
-                try
-                {
-                    Weather weather = new Weather(dbHelper);
-                    for (int i = 0; i < dailyFcst.length(); i++)
-                    {
-                        String txtDate = dailyFcst.getJSONObject(i).getString("date").substring(5);   // 日期
-                        JSONObject dateCond = dailyFcst.getJSONObject(i).getJSONObject("cond");
-                        String txtDay = dateCond.getString("txt_d");  // 白天天气
-                        String txtNight = dateCond.getString("txt_n"); // 晚间天气
-                        JSONObject dateTmp = dailyFcst.getJSONObject(i).getJSONObject("tmp");
-                        String minTmp = dateTmp.getString("min");  // 最低气温
-                        String maxTmp = dateTmp.getString("max");  // 最高气温
-                        String txt = txtDay.equals(txtNight) ? txtDay : txtDay + "转" + txtNight;
-                        if (i == 0)
-                        {
-                            txtTodayWt.setText(txt);
-                            txtTodayTmp.setText(MessageFormat.format("{0}~{1}℃", minTmp, maxTmp));
-                        }
-                        Log.d("debug", txtDay + ", " + weather.queryWt(txtDay) );
-                        Bitmap wtIcon = LocalCache.readImgCache(mContext, weather.queryWt(txtDay), "ICON");
-                        Log.d("debug", (wtIcon == null) + "");
-                        dailyData.add(new DailyWt(txtDate, wtIcon, txt, maxTmp, minTmp));
-                    }
-                    listDaily.setAdapter(wtAdapter);
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
+                Log.d("debug", txtDay + ", " + weather.queryWt(txtDay) );
+                Bitmap wtIcon = LocalCache.readImgCache(mContext, weather.queryWt(txtDay), "ICON");
+                Log.d("debug", (wtIcon == null) + "");
+                dailyData.add(new DailyWt(txtDate, wtIcon, txt, maxTmp, minTmp));
             }
-        });
+            wtAdapter.notifyDataSetChanged();
+            listDaily.setAdapter(wtAdapter);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -422,28 +377,23 @@ public class FgMain extends Fragment
             final String uvBrf = new JSONObject(sug.getString("uv")).getString("brf");       // 防晒指数
             final String uvTxt = new JSONObject(sug.getString("uv")).getString("txt");
 
-            getActivity().runOnUiThread(new Runnable()
+            if (sugData.size() > 0)
             {
-                @Override
-                public void run()
-                {
-                    if (sugData.size() > 0)
-                    {
-                        sugData.removeAll(sugData);
-                        sugAdapter.notifyDataSetChanged();
-                        listSug.setAdapter(sugAdapter);
-                    }
-                    sugData.add(new Suggestion(R.drawable.cfm, " 舒适度：", comfBrf, comfTxt));
-                    sugData.add(new Suggestion(R.drawable.xiche, " 洗车指数：", cwBrf, cwTxt));
-                    sugData.add(new Suggestion(R.drawable.chuanyi, " 穿衣指数：", drsgBrf, drsgTxt));
-                    sugData.add(new Suggestion(R.drawable.ganmao, " 感冒指数：", fluBrf, fluTxt));
-                    sugData.add(new Suggestion(R.drawable.yundong, " 运动指数：", sportBrf, sportTxt));
-                    sugData.add(new Suggestion(R.drawable.lvyou, " 旅游指数：", travBrf, travTxt));
-                    sugData.add(new Suggestion(R.drawable.fangshai, " 防晒指数：", uvBrf, uvTxt));
-                    // sugAdapter.notifyDataSetChanged();
-                    listSug.setAdapter(sugAdapter);
-                }
-            });
+                sugData.removeAll(sugData);
+                sugAdapter.notifyDataSetChanged();
+                listSug.setAdapter(sugAdapter);
+            }
+            sugData.add(new Suggestion(R.drawable.cfm, " 舒适度：", comfBrf, comfTxt));
+            sugData.add(new Suggestion(R.drawable.xiche, " 洗车指数：", cwBrf, cwTxt));
+            sugData.add(new Suggestion(R.drawable.chuanyi, " 穿衣指数：", drsgBrf, drsgTxt));
+            sugData.add(new Suggestion(R.drawable.ganmao, " 感冒指数：", fluBrf, fluTxt));
+            sugData.add(new Suggestion(R.drawable.yundong, " 运动指数：", sportBrf, sportTxt));
+            sugData.add(new Suggestion(R.drawable.lvyou, " 旅游指数：", travBrf, travTxt));
+            sugData.add(new Suggestion(R.drawable.fangshai, " 防晒指数：", uvBrf, uvTxt));
+            sugAdapter.notifyDataSetChanged();
+            listSug.setAdapter(sugAdapter);
+            // pgbar.setVisibility(View.GONE);
+            txtUpdateSign.setVisibility(View.INVISIBLE);
         }
         catch (Exception e)
         {
@@ -464,31 +414,5 @@ public class FgMain extends Fragment
         });
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        Log.e("fg", "onCreat");
-    }
 
-    @Override
-    public void onResume()
-    {
-        super.onResume();
-        Log.e("fg", "onResume");
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        Log.e("fg", "onPause");
-    }
-
-    @Override
-    public void onDestroyView()
-    {
-        super.onDestroyView();
-        Log.e("fg", "onDestoryView");
-    }
 }

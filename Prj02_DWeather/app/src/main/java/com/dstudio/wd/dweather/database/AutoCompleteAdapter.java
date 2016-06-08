@@ -11,8 +11,6 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter
 {
     private String queryField;
     private Context context;
-    private MyDatabaseHelper myDatabaseHelper = null;
-
 
     public AutoCompleteAdapter(Context context, int layout, Cursor c, String[] from, int[] to)
     {
@@ -26,7 +24,7 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter
     {
         if(constraint != null)
         {
-            return new City(getMyDatabaseHelper()).queryCity((String) constraint);
+            return new City(context).queryCity((String) constraint);
         }
         else
         {
@@ -40,12 +38,4 @@ public class AutoCompleteAdapter extends SimpleCursorAdapter
         return cursor.getString(cursor.getColumnIndex(queryField));
     }
 
-    public MyDatabaseHelper getMyDatabaseHelper()
-    {
-        if (myDatabaseHelper == null)
-        {
-            myDatabaseHelper = new MyDatabaseHelper(this.context, "CityInfo.db", null, 1);
-        }
-        return myDatabaseHelper;
-    }
 }

@@ -18,6 +18,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -35,8 +36,6 @@ import com.dstudio.wd.dweather.adapter.CityAdapter;
 import com.dstudio.wd.dweather.adapter.CityItem;
 import com.dstudio.wd.dweather.database.AutoCompleteAdapter;
 import com.dstudio.wd.dweather.database.City;
-import com.dstudio.wd.dweather.database.MyDatabaseHelper;
-import com.dstudio.wd.dweather.database.OriginalData;
 import com.dstudio.wd.dweather.http.HttpCallbackListener;
 import com.dstudio.wd.dweather.http.HttpUtil;
 import com.dstudio.wd.dweather.localdata.LocalData;
@@ -49,7 +48,7 @@ import org.json.JSONObject;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MainActivity extends Activity implements View.OnClickListener
+public class MainActivity extends Activity
 {
     private DrawerLayout mDrawerLayout;
     private LinearLayout leftDrawer;
@@ -57,13 +56,12 @@ public class MainActivity extends Activity implements View.OnClickListener
     private Button btnLeft;
     private Button btnRight;
     private AutoCompleteTextView searchTextView;
-    private Button btnAddCity;
+    // private Button btnAddCity;
 
     private ProgressBar pgbar;
     private ScrollView scrollView;
 
     private Context mContext;
-    private MyDatabaseHelper dbHelper;
 
     private FgMain fgMain;
     private FragmentTransaction transaction;
@@ -84,28 +82,23 @@ public class MainActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+        firstFlag = getIntent().getBooleanExtra("isFirst", false);
         mContext = MainActivity.this;
-        dbHelper = new MyDatabaseHelper(this, "CityInfo.db", null, 1);
         bindView();           // 初始化控件
         setViewListener();
+        String savedCityName = getSharedPreferences("city", MODE_PRIVATE).getString("city", "");
+        if (!savedCityName.equals(""))
+        {
+            showWeather(savedCityName);
+            topTitle.setText(savedCityName);
+        }
         if (new Judgement(mContext).isNetworkAvailable())
         {
-            pgbar.setVisibility(View.VISIBLE);
-            createOriData();      // 若为首次启动，建立本地数据库
             initLocationClient(); // 定位初始化
         }
         else
         {
-            /*
-             当前无网络时，由SharedPreferences保存的城市名称获取本地数据
-             */
             Toast.makeText(mContext, "当前无网络 :(", Toast.LENGTH_LONG).show();
-            String savedCityName = getSharedPreferences("city", MODE_PRIVATE).getString("city", "");
-            if (!savedCityName.equals(""))
-            {
-                showWeather(savedCityName);
-                topTitle.setText(savedCityName);
-            }
         }
         needRec = true;
     }
@@ -121,20 +114,19 @@ public class MainActivity extends Activity implements View.OnClickListener
 
         leftDrawer = (LinearLayout) findViewById(R.id.left_drawer);
         scrollView = (ScrollView) findViewById(R.id.scroll_view);
-        pgbar = (ProgressBar) findViewById(R.id.progress_bar);
+        // pgbar = (ProgressBar) findViewById(R.id.progress_bar);
         topTitle = (TextView) findViewById(R.id.top_title);
         btnLeft = (Button) findViewById(R.id.left_button);
         btnRight = (Button) findViewById(R.id.right_button);
         searchTextView = (AutoCompleteTextView) findViewById(R.id.search_city);
 
         Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont.ttf");
-        btnAddCity = (Button) findViewById(R.id.add_city);
-        btnAddCity.setTypeface(iconfont);
-        btnAddCity.setOnClickListener(this);
+        // btnAddCity = (Button) findViewById(R.id.add_city);
+        // btnAddCity.setTypeface(iconfont);
+        // btnAddCity.setOnClickListener(this);
 
         btnLeft.setTypeface(iconfont);
         btnRight.setTypeface(iconfont);
-        btnLeft.setOnClickListener(this);
 
         AutoCompleteAdapter autoCompleteAdapter = new AutoCompleteAdapter(mContext, android.R.layout.simple_dropdown_item_1line,
                 null, new String[] {"city_name"}, new int[] {android.R.id.text1});
@@ -153,6 +145,15 @@ public class MainActivity extends Activity implements View.OnClickListener
      */
     public void setViewListener()
     {
+        btnLeft.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                mDrawerLayout.openDrawer(leftDrawer);
+            }
+        });
+
         searchTextView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -161,6 +162,11 @@ public class MainActivity extends Activity implements View.OnClickListener
                 TextView textView = (TextView) view.findViewById(android.R.id.text1);
                 showCityList(textView.getText().toString().replace("市", ""));
                 searchTextView.setText("");
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null)
+                {
+                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                }
             }
         });
 
@@ -195,7 +201,18 @@ public class MainActivity extends Activity implements View.OnClickListener
             }
         });
 
-
+        mDrawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener()
+        {
+            @Override
+            public void onDrawerClosed(View drawerView)
+            {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                if (imm != null)
+                {
+                    imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+                }
+            }
+        });
     }
 
     /**
@@ -215,14 +232,12 @@ public class MainActivity extends Activity implements View.OnClickListener
                 lcCity = bdLocation.getCity().replace("市", "");
                 showCityList(lcCity);
                 showWeather(lcCity);
-
                 topTitle.setText(lcCity);
                 SharedPreferences.Editor editor = getSharedPreferences("city", MODE_PRIVATE).edit();
                 editor.putString("city", lcCity);
                 editor.commit();
             }
         });
-
         new Location(mLocationClient).initLocation();
         mLocationClient.start();
     }
@@ -233,15 +248,17 @@ public class MainActivity extends Activity implements View.OnClickListener
      */
     public void showWeather(String cityName)
     {
+        // pgbar.setVisibility(View.VISIBLE);
         Bundle bundle = new Bundle();
         // 若为首次启动，使用城市名称请求数据，否则使用ID
         if (firstFlag)
         {
             bundle.putString("key", cityName);
+            firstFlag = false;
         }
         else
         {
-            String cityId = new City(dbHelper).queryCityId(cityName);
+            String cityId = new City(mContext).queryCityId(cityName);
             Log.d("debug", cityName + " 的ID是：" + cityId);
             bundle.putString("key", cityId);
         }
@@ -251,7 +268,6 @@ public class MainActivity extends Activity implements View.OnClickListener
         fgMain.setArguments(bundle);
         transaction.replace(R.id.frag_layout, fgMain);
         transaction.commit();
-        pgbar.setVisibility(View.VISIBLE);
     }
 
     public void showCityList(final String cityName)
@@ -266,7 +282,7 @@ public class MainActivity extends Activity implements View.OnClickListener
         }
         else
         {
-            parm = new City(dbHelper).queryCityId(cityName);
+            parm = new City(mContext).queryCityId(cityName);
             url = getString(R.string.wt_api_no_parm) + "cityid=" + parm + "&key=" + KEY;
         }
         if (!parm.equals(""))
@@ -313,74 +329,6 @@ public class MainActivity extends Activity implements View.OnClickListener
 
                 }
             });
-        }
-    }
-
-    /**
-     * 第一次启动， 建立城市数据库/天气图标数据库
-     */
-    public void createOriData()
-    {
-        if(new Judgement(mContext).judgeVersion())
-        {
-            firstFlag = true;
-            String CITY_API = getString(R.string.city_api);
-            dbHelper.getWritableDatabase();
-            HttpUtil.sendHttpRequest(CITY_API, new HttpCallbackListener()
-            {
-                @Override
-                public void onFinish(String response)
-                {
-                    new OriginalData(dbHelper, mContext).parseJSONForCity(response);
-                }
-
-                @Override
-                public void onError(Exception e)
-                {
-                    Log.d("MainActivity", "获取数据失败 (✖╭╮✖)");
-                }
-            });
-
-            String wtIconApi = getString(R.string.weather_icon_api);
-            HttpUtil.sendHttpRequest(wtIconApi, new HttpCallbackListener()
-            {
-                @Override
-                public void onFinish(String response)
-                {
-                    Log.d("debug", "ICON, OK");
-                    new OriginalData(dbHelper, mContext).parseJSONForWt(response);
-                }
-
-                @Override
-                public void onError(Exception e)
-                {
-                    Log.e("ERROR", "获取天气列表失败");
-                }
-            });
-        }
-    }
-
-
-    @Override
-    public void onClick(View view)
-    {
-        switch (view.getId())
-        {
-            case R.id.add_city:
-                if (searchTextView.getVisibility() == View.GONE)
-                {
-                    searchTextView.setVisibility(View.VISIBLE);
-                }
-                else
-                {
-                    searchTextView.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.left_button:
-                mDrawerLayout.openDrawer(leftDrawer);
-                break;
-            default:
-                break;
         }
     }
 

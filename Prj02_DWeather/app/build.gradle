@@ -10,8 +10,8 @@ android {
         applicationId "com.dstudio.wd.dweather"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.2.0"
     }
     buildTypes {
         release {
@@ -39,4 +39,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'com.android.support:support-v4:23.2.0'
+    compile 'com.android.support:cardview-v7:23.2.0'
+    compile 'com.android.support:palette-v7:23.2.0'
 }

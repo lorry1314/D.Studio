@@ -44,7 +44,6 @@ public class Judgement
             SharedPreferences.Editor editor = sp.edit();
             editor.putFloat("spVersion", nowVersion);
             editor.commit();
-            Toast.makeText(mContext, "第一次 呵呵", Toast.LENGTH_SHORT).show();
             return true;
         }
         else

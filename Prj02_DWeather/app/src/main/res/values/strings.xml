@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LOMO.天气</string>
+    <string name="app_name">LOMO.天气 Beta</string>
 
     <!-- iconfont -->
     <string name="search">&#xe603;</string>
@@ -13,6 +13,8 @@
     <string name="city_api">https://api.heweather.com/x3/citylist?search=allchina&amp;key=478855289bf843bea01cbbf983887878</string>
     <string name="weather_icon_api">https://api.heweather.com/x3/condition?search=allcond&amp;key=478855289bf843bea01cbbf983887878</string>
     <string name="wt_api_no_parm">https://api.heweather.com/x3/weather?</string>
+
+    <string name="db_dir_path">/data/data/com.dstudio.wd.dweather/databases</string>
 
     <string name="blank">  </string>
 

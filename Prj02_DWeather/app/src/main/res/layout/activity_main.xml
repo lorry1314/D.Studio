@@ -33,7 +33,6 @@
                 android:textSize="15sp"
                 android:padding="5dp"
                 android:layout_margin="5dp"
-                android:visibility="gone"
                 android:background="@drawable/tv_search_style"/>
 
         </LinearLayout>
@@ -43,11 +42,13 @@
             android:layout_height="wrap_content"
             android:id="@+id/list_city"/>
 
+
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#bfbfbf"/>
 
+        <!--
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,6 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="#bfbfbf"/>
+
+        -->
 
     </LinearLayout>
 

@@ -78,20 +78,4 @@ public class HttpUtil
         }
         return currentTime;
     }
-
-    public static boolean judgeTime(int updateHour)
-    {
-        int currentHour = Integer.parseInt(HttpUtil.getCurrentDate("hour", 0));
-        System.out.println(currentHour + "," + updateHour);
-        if(currentHour - updateHour >= 5)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
 }
