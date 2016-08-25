@@ -116,12 +116,9 @@ public class FgMain extends Fragment
         else
         {
             parseJson(LocalData.load(getArguments().getString("key"), mContext));
-            // pgbar.setVisibility(View.VISIBLE);
             txtUpdateSign.setVisibility(View.VISIBLE);
-            // imgWt.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.zoom_in));
             sendWtRequest(getArguments().getString("key"));
         }
-
         return view;
     }
 
@@ -185,11 +182,6 @@ public class FgMain extends Fragment
         {
             strParam = para;
             String url = "https://api.heweather.com/x3/weather?cityid=" + para + "&key=" + KEY;
-            if (!para.startsWith("CN"))
-            {
-                url = "https://api.heweather.com/x3/weather?city=" + para + "&key=" + KEY;
-            }
-
             HttpUtil.sendHttpRequest(url, new HttpCallbackListener()
             {
                 @Override
@@ -205,7 +197,8 @@ public class FgMain extends Fragment
                 @Override
                 public void onError(Exception e)
                 {
-
+                    e.printStackTrace();
+                    showError();
                 }
             });
         }
@@ -257,8 +250,8 @@ public class FgMain extends Fragment
         }
         catch (Exception e)
         {
-            // showError();
             e.printStackTrace();
+            showError();
         }
     }
 
@@ -298,6 +291,7 @@ public class FgMain extends Fragment
         catch (Exception e)
         {
             e.printStackTrace();
+            showError();
         }
     }
 
@@ -345,6 +339,7 @@ public class FgMain extends Fragment
         catch (Exception e)
         {
             e.printStackTrace();
+            showError();
         }
     }
 
@@ -356,26 +351,26 @@ public class FgMain extends Fragment
     {
         try
         {
-            final String comfBrf = new JSONObject(sug.getString("comf")).getString("brf");   // 舒适度
-            final String comfTxt = new JSONObject(sug.getString("comf")).getString("txt");
+            String comfBrf = new JSONObject(sug.getString("comf")).getString("brf");   // 舒适度
+            String comfTxt = new JSONObject(sug.getString("comf")).getString("txt");
 
-            final String cwBrf = new JSONObject(sug.getString("cw")).getString("brf");       // 洗车指数
-            final String cwTxt = new JSONObject(sug.getString("cw")).getString("txt");
+            String cwBrf = new JSONObject(sug.getString("cw")).getString("brf");       // 洗车指数
+            String cwTxt = new JSONObject(sug.getString("cw")).getString("txt");
 
-            final String drsgBrf = new JSONObject(sug.getString("drsg")).getString("brf");  // 穿衣指数
-            final String drsgTxt = new JSONObject(sug.getString("drsg")).getString("txt");
+            String drsgBrf = new JSONObject(sug.getString("drsg")).getString("brf");  // 穿衣指数
+            String drsgTxt = new JSONObject(sug.getString("drsg")).getString("txt");
 
-            final String fluBrf = new JSONObject(sug.getString("flu")).getString("brf");    // 感冒指数
-            final String fluTxt = new JSONObject(sug.getString("flu")).getString("txt");
+            String fluBrf = new JSONObject(sug.getString("flu")).getString("brf");    // 感冒指数
+            String fluTxt = new JSONObject(sug.getString("flu")).getString("txt");
 
-            final String sportBrf = new JSONObject(sug.getString("sport")).getString("brf");   // 运动指数
-            final String sportTxt = new JSONObject(sug.getString("sport")).getString("txt");
+            String sportBrf = new JSONObject(sug.getString("sport")).getString("brf");   // 运动指数
+            String sportTxt = new JSONObject(sug.getString("sport")).getString("txt");
 
-            final String travBrf = new JSONObject(sug.getString("trav")).getString("brf");    // 旅游指数
-            final String travTxt = new JSONObject(sug.getString("trav")).getString("txt");
+            String travBrf = new JSONObject(sug.getString("trav")).getString("brf");    // 旅游指数
+            String travTxt = new JSONObject(sug.getString("trav")).getString("txt");
 
-            final String uvBrf = new JSONObject(sug.getString("uv")).getString("brf");       // 防晒指数
-            final String uvTxt = new JSONObject(sug.getString("uv")).getString("txt");
+            String uvBrf = new JSONObject(sug.getString("uv")).getString("brf");       // 防晒指数
+            String uvTxt = new JSONObject(sug.getString("uv")).getString("txt");
 
             if (sugData.size() > 0)
             {
@@ -392,13 +387,13 @@ public class FgMain extends Fragment
             sugData.add(new Suggestion(R.drawable.fangshai, " 防晒指数：", uvBrf, uvTxt));
             sugAdapter.notifyDataSetChanged();
             listSug.setAdapter(sugAdapter);
-            // pgbar.setVisibility(View.GONE);
             txtUpdateSign.setVisibility(View.INVISIBLE);
         }
         catch (Exception e)
         {
             Log.e("ERROR", "sugData解析失败！");
             e.printStackTrace();
+            showError();
         }
     }
 
@@ -413,6 +408,4 @@ public class FgMain extends Fragment
             }
         });
     }
-
-
 }

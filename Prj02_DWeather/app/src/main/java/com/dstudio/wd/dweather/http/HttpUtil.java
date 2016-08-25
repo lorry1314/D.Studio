@@ -60,22 +60,4 @@ public class HttpUtil
             }
         }).start();
     }
-
-    public static String getCurrentDate(String option, int day)
-    {
-        Calendar cal = Calendar.getInstance();
-        String currentTime = null;
-        if(option.equals("day"))
-        {
-            cal.add(Calendar.DAY_OF_MONTH, -day);
-            java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
-            currentTime = format.format(cal.getTime());
-        }
-        else if (option.equals("hour"))
-        {
-            Date date = new Date();
-            currentTime = date.getHours() + "";
-        }
-        return currentTime;
-    }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LOMO.天气 Beta</string>
+    <string name="app_name">LOMO天气</string>
 
     <!-- iconfont -->
     <string name="search">&#xe603;</string>

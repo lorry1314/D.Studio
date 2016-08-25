@@ -5,20 +5,39 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:paddingLeft="20dp"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:id="@+id/item_city_name"/>
+        android:id="@+id/item_city"
+        android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:id="@+id/item_city_tmp"
-        android:textSize="30sp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:id="@+id/item_city_name"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/item_city_tmp"
+            android:textSize="30sp"/>
+
+    </LinearLayout>
+
+
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:id="@+id/delete_button"
+        android:src="@drawable/cancel"
+        android:layout_gravity="center_vertical"
+        android:background="#0000"
+        android:visibility="gone"/>
 
 </LinearLayout>

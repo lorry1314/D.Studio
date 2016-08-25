@@ -1,59 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
-    tools:context=".MainActivity"
-    android:weightSum="1">
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
-    <include layout="@layout/title_layout"/>
-    <View
+    <include
+        layout="@layout/app_bar_main"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#cfcfcf"/>
+        android:layout_height="match_parent"/>
 
-    <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:visibility="gone"
-        android:id="@+id/progress_bar"/>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/activity_main_drawer"/>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/scroll_view">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:id="@+id/blank_space"
-                android:visibility="gone"
-                android:background="@color/colorAccent"/>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/fram_layout"/>
-
-        </LinearLayout>
-
-    </ScrollView>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#cfcfcf"/>
-    <include layout="@layout/tab_layout"/>
-
-</LinearLayout>
+</android.support.v4.widget.DrawerLayout>

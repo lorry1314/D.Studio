@@ -1,170 +1,178 @@
 package com.dstudio.wd824.one;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-import com.dstudio.wd824.one.fragments.FgAbout;
-import com.dstudio.wd824.one.fragments.FgHome;
-import com.dstudio.wd824.one.fragments.FgQuestion;
-import com.dstudio.wd824.one.fragments.FgReading;
+import com.dstudio.wd.one.fragment.DetailFragment;
+import com.dstudio.wd.one.fragment.HistoryFragment;
+import com.dstudio.wd.one.fragment.ReadingFragment;
+import com.dstudio.wd.one.util.HttpCallbackListener;
+import com.dstudio.wd.one.util.HttpUtil;
+import com.dstudio.wd.one.util.LocalData;
 
-import cn.sharesdk.framework.ShareSDK;
+import java.util.ArrayList;
 
-public class MainActivity extends Activity implements View.OnClickListener
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener
 {
+    private static final String TAG = "MainActivity";
+    private Context mContext;
+    private DetailFragment fgDetail;
+    private ReadingFragment fgReading;
+    private HistoryFragment fgHistory;
 
-    private LinearLayout topBar;
-    private LinearLayout tabLayout;
-
-    private Button btnRight;
-
-    private Button btnHome;
-    private Button btnReading;
-    private Button btnQuestion;
-    private Button btnAbout;
-    private ScrollView scrollView;
-
-    private FrameLayout frameLayout;
     private FragmentManager manager;
-    private Fragment fgHome;
-    private Fragment fgReading;
-    private Fragment fgQuestion;
-    private Fragment fgAbout;
+    private FragmentTransaction transaction;
+
+    private ArrayList<String> idList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        ShareSDK.initSDK(this);
-        topBar = (LinearLayout) findViewById(R.id.top_bar);
-        tabLayout = (LinearLayout) findViewById(R.id.tab_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        mContext = getApplicationContext();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         initView();
-        selectFrag(1);
-    }
-
-    /**
-     * 控件初始化
-     */
-    private void initView()
-    {
-        btnRight = (Button) findViewById(R.id.right_button);
-        Typeface iconfont = Typeface.createFromAsset(getAssets(), "iconfont.ttf");
-        btnRight.setTypeface(iconfont);
-        btnRight.setText(R.string.share);
-
-        btnHome = (Button) findViewById(R.id.btn_home);
-        btnReading = (Button) findViewById(R.id.btn_reading);
-        btnQuestion = (Button) findViewById(R.id.btn_question);
-        btnAbout = (Button) findViewById(R.id.btn_about);
-
-        frameLayout = (FrameLayout) findViewById(R.id.fram_layout);
-        scrollView = (ScrollView) findViewById(R.id.scroll_view);
-
-        btnHome.setOnClickListener(this);
-        btnReading.setOnClickListener(this);
-        btnQuestion.setOnClickListener(this);
-        btnAbout.setOnClickListener(this);
-
-        fgHome = new FgHome();
-        fgReading = new FgReading();
-        fgQuestion = new FgQuestion();
-        fgAbout = new FgAbout();
-
     }
 
     @Override
-    public void onClick(View view)
+    public void onBackPressed()
     {
-        switch (view.getId())
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START))
         {
-            case R.id.btn_home:
-                selectFrag(1);
-                break;
-            case R.id.btn_reading:
-                selectFrag(2);
-                break;
-            case R.id.btn_question:
-                selectFrag(3);
-                break;
-            case R.id.btn_about:
-                selectFrag(4);
-                break;
-            default:
-                break;
+            drawer.closeDrawer(GravityCompat.START);
         }
-
+        else
+        {
+            super.onBackPressed();
+        }
     }
 
-    /**
-     * fragment切换
-     * @param i
-     */
-    public void selectFrag(int i)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
     {
-        setDefaultIcon();
-        manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-        switch (i)
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings)
         {
-            case 1:
-                setDrawable(btnHome, R.drawable.home_picked);
-                btnHome.setTextColor(getResources().getColor(R.color.btn_picked));
-                transaction.replace(R.id.fram_layout, fgHome);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item)
+    {
+        manager = getFragmentManager();
+        transaction = manager.beginTransaction();
+
+        switch (item.getItemId())
+        {
+            case R.id.nav_detail:  // 首页
+                Log.d(TAG, "item nav_detail");
+                transaction.replace(R.id.fram_layout, fgDetail);
                 break;
-            case 2:
-                setDrawable(btnReading, R.drawable.reading_picked);
-                btnReading.setTextColor(getResources().getColor(R.color.btn_picked));
+            case R.id.nav_read:    // 阅读
                 transaction.replace(R.id.fram_layout, fgReading);
                 break;
-            case 3:
-                setDrawable(btnQuestion, R.drawable.question_picked);
-                btnQuestion.setTextColor(getResources().getColor(R.color.btn_picked));
-                transaction.replace(R.id.fram_layout, fgQuestion);
+            case R.id.nav_history:  // 过往
+                transaction.replace(R.id.fram_layout, fgHistory);
                 break;
-            case 4:
-                setDrawable(btnAbout, R.drawable.about_picked);
-                btnAbout.setTextColor(getResources().getColor(R.color.btn_picked));
-                transaction.replace(R.id.fram_layout, fgAbout);
         }
         transaction.commit();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
-    public void setDefaultIcon()
+    public void initView()
     {
-        setDrawable(btnHome, R.drawable.home);
-        setDrawable(btnReading, R.drawable.reading);
-        setDrawable(btnQuestion, R.drawable.question);
-        setDrawable(btnAbout, R.drawable.about);
+        fgDetail = new DetailFragment();
+        fgReading = new ReadingFragment();
+        fgHistory = new HistoryFragment();
+
+        manager = getFragmentManager();
+        transaction = manager.beginTransaction();
+
+        idList = getIntent().getStringArrayListExtra(getString(R.string.id_list_key));
+        Bundle bundleDetail = new Bundle();
+        bundleDetail.putStringArrayList(getString(R.string.id_list_key), idList);
+        fgDetail.setArguments(bundleDetail);
+
+        transaction.replace(R.id.fram_layout, fgDetail);
+        transaction.commit();
+        getReadingIndex();
     }
 
-    public void setDrawable(Button btn, int resId)
+    public void getReadingIndex()
     {
-        Drawable drawable = getResources().getDrawable(resId);
-        drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
-        btn.setCompoundDrawables(null, drawable, null, null);
-        btnHome.setTextColor(getResources().getColor(R.color.btn_normal));
-        btnReading.setTextColor(getResources().getColor(R.color.btn_normal));
-        btnQuestion.setTextColor(getResources().getColor(R.color.btn_normal));
-        btnAbout.setTextColor(getResources().getColor(R.color.btn_normal));
+        HttpUtil.sendGet(getString(R.string.reading_index) + "0", new HttpCallbackListener()
+        {
+            @Override
+            public void onFinish(String response)
+            {
+                LocalData.save(response, "reading_index", mContext);
+                setBundleForRd(response);
+            }
+
+            @Override
+            public void onError(Exception e)
+            {
+                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
+                String response = LocalData.load("reading_index", mContext);
+                setBundleForRd(response);
+            }
+        });
     }
 
-    @Override
-    protected void onDestroy()
+    public void setBundleForRd(String response)
     {
-        super.onDestroy();
-        ShareSDK.stopSDK(this);
+        Bundle bundle = new Bundle();
+        bundle.putString(getString(R.string.reading_index_key), response);
+        fgReading.setArguments(bundle);
     }
 }

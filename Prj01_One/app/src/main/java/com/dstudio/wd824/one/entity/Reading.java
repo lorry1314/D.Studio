@@ -1,96 +1,46 @@
 package com.dstudio.wd824.one.entity;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 /**
- * Created by wd824 on 2016/6/5.
+ * Created by wd824 on 2016/6/20.
  */
 public class Reading
 {
-    private String contTitle;
-    private String contAuthor;
-    private String content;
-    private String editor;
-    private String praiseNum;
     private String time;
-    private String webLink;
-    private String imgUrl;
 
-    public Reading()
-    {
-        super();
-    }
+    // 问答
+    @SerializedName("question_id")
+    private String questionId;
 
-    public Reading(String contTitle, String contAuthor, String content, String editor,
-                   String praiseNum, String time, String webLink, String imgUrl)
-    {
-        this.contTitle = contTitle;
-        this.contAuthor = contAuthor;
-        this.content = content;
-        this.editor = editor;
-        this.praiseNum = praiseNum;
-        this.time = time;
-        this.webLink = webLink;
-        this.imgUrl = imgUrl;
-    }
+    @SerializedName("question_title")
+    private String questionTitle;
 
-    public String getContTitle()
-    {
-        return contTitle;
-    }
+    @SerializedName("answer_title")
+    private String answerTitle;
 
-    public void setContTitle(String contTitle)
-    {
-        this.contTitle = contTitle;
-    }
+    @SerializedName("answer_content")
+    private String answerContent;
 
-    public String getContAuthor()
-    {
-        return contAuthor;
-    }
+    @SerializedName("answer_makettime")
+    private String questionMakettime;
 
-    public void setContAuthor(String contAuthor)
-    {
-        this.contAuthor = contAuthor;
-    }
+    // 短篇
+    @SerializedName("content_id")
+    private String contentId;
 
-    public String getContent()
-    {
-        return content;
-    }
+    @SerializedName("hp_id")
+    private String hpTitle;
 
-    public void setContent(String content)
-    {
-        this.content = content;
-    }
+    @SerializedName("hp_makettime")
+    private String hpMakettime;
 
-    public String getEditor()
-    {
-        return editor;
-    }
+    @SerializedName("guide_word")
+    private String guideWord;
 
-    public void setEditor(String editor)
-    {
-        this.editor = editor;
-    }
-
-    public String getPraiseNum()
-    {
-        return praiseNum;
-    }
-
-    public void setPraiseNum(String praiseNum)
-    {
-        this.praiseNum = praiseNum;
-    }
-
-    public String getWebLink()
-    {
-        return webLink;
-    }
-
-    public void setWebLink(String webLink)
-    {
-        this.webLink = webLink;
-    }
+    private List<Author> author;
 
     public String getTime()
     {
@@ -102,13 +52,103 @@ public class Reading
         this.time = time;
     }
 
-    public String getImgUrl()
+    public String getQuestionId()
     {
-        return imgUrl;
+        return questionId;
     }
 
-    public void setImgUrl(String imgUrl)
+    public void setQuestionId(String questionId)
     {
-        this.imgUrl = imgUrl;
+        this.questionId = questionId;
+    }
+
+    public String getQuestionTitle()
+    {
+        return questionTitle;
+    }
+
+    public void setQuestionTitle(String questionTitle)
+    {
+        this.questionTitle = questionTitle;
+    }
+
+    public String getAnswerTitle()
+    {
+        return answerTitle;
+    }
+
+    public void setAnswerTitle(String answerTitle)
+    {
+        this.answerTitle = answerTitle;
+    }
+
+    public String getAnswerContent()
+    {
+        return answerContent;
+    }
+
+    public void setAnswerContent(String answerContent)
+    {
+        this.answerContent = answerContent;
+    }
+
+    public String getQuestionMakettime()
+    {
+        return questionMakettime;
+    }
+
+    public void setQuestionMakettime(String questionMakettime)
+    {
+        this.questionMakettime = questionMakettime;
+    }
+
+    public String getContentId()
+    {
+        return contentId;
+    }
+
+    public void setContentId(String contentId)
+    {
+        this.contentId = contentId;
+    }
+
+    public String getHpTitle()
+    {
+        return hpTitle;
+    }
+
+    public void setHpTitle(String hpTitle)
+    {
+        this.hpTitle = hpTitle;
+    }
+
+    public String getHpMakettime()
+    {
+        return hpMakettime;
+    }
+
+    public void setHpMakettime(String hpMakettime)
+    {
+        this.hpMakettime = hpMakettime;
+    }
+
+    public String getGuideWord()
+    {
+        return guideWord;
+    }
+
+    public void setGuideWord(String guideWord)
+    {
+        this.guideWord = guideWord;
+    }
+
+    public List<Author> getAuthor()
+    {
+        return author;
+    }
+
+    public void setAuthor(List<Author> author)
+    {
+        this.author = author;
     }
 }

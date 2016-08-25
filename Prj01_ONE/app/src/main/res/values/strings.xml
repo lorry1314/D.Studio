@@ -1,13 +1,29 @@
 <resources>
-    <string name="app_name">ONE · 一个</string>
+    <string name="app_name">ONE</string>
 
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="setting">&#xe602;</string>
-    <string name="chevron_right">&#xe601;</string>
-    <string name="arrow_left">&#xe600;</string>
-    <string name="save">&#xe603;</string>
-    <string name="share">&#xe604;</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_share">分享</string>
+
+    <!-- 官方应用API -->
+    <string name="id_list">http://v3.wufazhuce.com:8000/api/hp/idlist/0</string>
+    <string name="reading_index">http://v3.wufazhuce.com:8000/api/reading/index/</string>
+
+    <string name="detail_api">http://v3.wufazhuce.com:8000/api/hp/detail/</string>
+    <string name="essay_api">http://v3.wufazhuce.com:8000/api/essay/</string>
+    <string name="question_api">http://v3.wufazhuce.com:8000/api/question/</string>
+
+    <string name="add_praise_api">http://v3.wufazhuce.com:8000/api/praise/add</string>
+    <string name="get_praise_num">http://v3.wufazhuce.com:8000/api/hp/update/</string>
+
+    <string name="id_list_key">id_list</string>
+    <string name="reading_index_key">reading_index</string>
+    <string name="file_name_detail">detail_</string>
+    <string name="essay_key">essay_key</string>
+    <string name="question_key">question_key</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

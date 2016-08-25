@@ -11,12 +11,10 @@ import com.dstudio.wd.dweather.R;
  */
 public class City
 {
-    // private MyDatabaseHelper dbHelper;
     private Context mContext;
 
     public City(Context mContext)
     {
-        // this.dbHelper = dbHelper;
         this.mContext = mContext;
     }
 
@@ -33,7 +31,6 @@ public class City
      */
     public String queryCityId(String cityName)
     {
-        // SQLiteDatabase db = dbHelper.getReadableDatabase();
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(mContext.getString(R.string.db_dir_path) + "/city.db", null);
         Cursor cursor = db.rawQuery("select city_id from City where city_name = ?", new String[]{cityName});
         if (cursor.moveToFirst())

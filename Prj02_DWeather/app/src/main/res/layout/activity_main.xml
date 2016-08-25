@@ -48,6 +48,18 @@
             android:layout_height="0.5dp"
             android:background="#bfbfbf"/>
 
+        <Button
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:padding="-10dp"
+            android:id="@+id/cancel_button"
+            android:text="取消"
+            android:textColor="#353535"
+            android:background="@drawable/tv_search_style"
+            android:visibility="invisible"
+            android:layout_gravity="center"/>
+
         <!--
         <Button
             android:layout_width="match_parent"

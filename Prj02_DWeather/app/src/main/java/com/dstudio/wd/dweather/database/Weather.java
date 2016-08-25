@@ -21,14 +21,14 @@ public class Weather
     public String queryWt(String wtName)
     {
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(mContext.getString(R.string.db_dir_path) + "/city.db", null);
+        String iconUrl = null;
         Cursor cursor = db.rawQuery("select wt_icon from Weather where wt_name = ?", new String[] {wtName});
         if (cursor.moveToFirst())
         {
-            return cursor.getString(cursor.getColumnIndex("wt_icon"));
+            iconUrl = cursor.getString(cursor.getColumnIndex("wt_icon"));
+            cursor.close();
+            db.close();
         }
-        else
-        {
-            return null;
-        }
+        return iconUrl;
     }
 }

@@ -20,6 +20,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
             android:name=".SplashActivity"
             android:theme="@style/FullscreenTheme">
             <intent-filter>
@@ -28,9 +33,14 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".EssayActivity"
+            android:label="短篇"
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".SettingActivity">
+        <activity android:name=".QuestionActivity"
+                  android:label="问答"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
             android:name="com.mob.tools.MobUIShell"
