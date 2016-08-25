@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">ONE</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_share">分享</string>
+
+    <!-- 官方应用API -->
+    <string name="id_list">http://v3.wufazhuce.com:8000/api/hp/idlist/0</string>
+    <string name="reading_index">http://v3.wufazhuce.com:8000/api/reading/index/</string>
+
+    <string name="detail_api">http://v3.wufazhuce.com:8000/api/hp/detail/</string>
+    <string name="essay_api">http://v3.wufazhuce.com:8000/api/essay/</string>
+    <string name="question_api">http://v3.wufazhuce.com:8000/api/question/</string>
+
+    <string name="add_praise_api">http://v3.wufazhuce.com:8000/api/praise/add</string>
+    <string name="get_praise_num">http://v3.wufazhuce.com:8000/api/hp/update/</string>
+
+    <string name="detail_history_api">http://v3.wufazhuce.com:8000/api/hp/bymonth/</string>
+    <string name="essay_history_api">http://v3.wufazhuce.com:8000/api/essay/bymonth/</string>
+    <string name="question_history_api">http://v3.wufazhuce.com:8000/api/question/bymonth/</string>
+    <string name="history_api_end">%2000:00:00</string>
+
+    <string name="id_list_key">id_list</string>
+    <string name="reading_index_key">reading_index</string>
+    <string name="file_name_detail">detail_</string>
+    <string name="essay_key">essay_key</string>
+    <string name="question_key">question_key</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_month">MonthActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+</resources>
