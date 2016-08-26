@@ -10,9 +10,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dstudio.wd.one.entity.Author;
 import com.dstudio.wd.one.entity.essay.Data;
@@ -26,6 +28,9 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.util.List;
 
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+
 public class EssayActivity extends AppCompatActivity
 {
     private TextView txtTitle;
@@ -35,6 +40,10 @@ public class EssayActivity extends AppCompatActivity
     private TextView txtAuthorIntroduce;
 
     private Context mContext;
+
+    private String webUrl;
+    private String imgUrl;
+    private String guideWord;
 
     private static final String TAG = "EssayActivity";
     private static final int SHOW_CONTENT = 0;
@@ -55,6 +64,9 @@ public class EssayActivity extends AppCompatActivity
                 txtTitle.setText(data.getHpTitle());
                 txtContent.setText(Html.fromHtml(data.getHpContent()));
                 txtAuthorIntroduce.setText(data.getHpAuthorIntroduce());
+                webUrl = data.getWebUrl();
+                imgUrl = data.getWbImgUrl();
+                guideWord = data.getGuideWord();
             }
             else if (msg.what == SHOW_IMG)
             {
@@ -117,6 +129,21 @@ public class EssayActivity extends AppCompatActivity
     {
         getMenuInflater().inflate(R.menu.share, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+
+        if (id == R.id.action_share)
+        {
+            HttpUtil.showShare(mContext, txtTitle.getText().toString(), txtContent.getText().toString(),
+                    webUrl, getString(R.string.icon_url));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void sendRequest(final String contentId)

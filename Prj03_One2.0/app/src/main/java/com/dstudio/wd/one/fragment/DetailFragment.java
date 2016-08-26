@@ -16,6 +16,9 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -69,6 +72,8 @@ public class DetailFragment extends Fragment
     private String hpContentId;  // 当前期数的id
     private String hpLastUpdate;  // 当前期数的最后更新时间
     private boolean isPraised = false; // 当前期数是否已赞
+    private String webUrl;
+    private String imgUrl;
 
     private static final String TAG = "DetailFragment";
     private static final int SHOW_CONTENT = 0;
@@ -87,6 +92,8 @@ public class DetailFragment extends Fragment
                 txtHpAuthor.setText(detail.getHpAuthor());
                 txtHpContent.setText(detail.getHpContent());
                 hpLastUpdate = detail.getLastUpdate().replace(" ", "%20");
+                webUrl = detail.getWebUrl();
+                imgUrl = detail.getHpImgUrl();
                 getPraiseNum();
             }
             else if (msg.what == SHOW_IMG)
@@ -141,6 +148,16 @@ public class DetailFragment extends Fragment
         });
         scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
         cardDetail = (CardView) view.findViewById(R.id.detail_card_view);
+        cardDetail.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View view)
+            {
+                HttpUtil.showShare(mContext, txtHpTitle.getText().toString(), txtHpContent.getText().toString(),
+                        webUrl, imgUrl);
+                return false;
+            }
+        });
         if (!"".equals(hpContentId))
         {
             getContent();
@@ -261,6 +278,7 @@ public class DetailFragment extends Fragment
                 detail.setHpTitle(data.getString("hp_title"));
                 detail.setHpAuthor(data.getString("hp_author"));
                 detail.setHpContent(data.getString("hp_content"));
+                detail.setHpImgUrl(data.getString("hp_img_url"));
                 detail.setWebUrl(data.getString("web_url"));
                 detail.setLastUpdate(data.getString("last_update_date"));
                 detail.setPraiseNum(data.getString("praisenum"));
@@ -344,4 +362,6 @@ public class DetailFragment extends Fragment
             }
         });
     }
+
+
 }

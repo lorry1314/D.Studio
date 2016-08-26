@@ -1,5 +1,7 @@
 package com.dstudio.wd.one.util;
 
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,6 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
+
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 /**
  * Created by wd824 on 2016/5/3.
@@ -126,5 +131,20 @@ public class HttpUtil
             currentTime = date.getHours() + "";
         }
         return currentTime;
+    }
+
+    public static void showShare(Context mContext, String title, String text, String url, String imgUrl)
+    {
+        ShareSDK.initSDK(mContext);
+        OnekeyShare oks = new OnekeyShare();
+        oks.disableSSOWhenAuthorize();
+        oks.setTitle(title);
+        oks.setText(text);
+        oks.setTitleUrl(url);
+        oks.setUrl(url);
+        oks.setSite(url);
+        oks.setSiteUrl(url);
+        oks.setImageUrl(imgUrl);
+        oks.show(mContext);
     }
 }

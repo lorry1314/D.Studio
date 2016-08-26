@@ -1,4 +1,4 @@
-<resources>
+<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ONE</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -28,6 +28,8 @@
     <string name="file_name_detail">detail_</string>
     <string name="essay_key">essay_key</string>
     <string name="question_key">question_key</string>
+
+    <string name="icon_url">http://ww1.sinaimg.cn/mw690/74b52da9gw1f4r4xo5y0yj205c05cjrb.jpg</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

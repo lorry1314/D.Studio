@@ -22,8 +22,8 @@ import java.util.ArrayList;
  */
 public class HpFragment extends Fragment
 {
+    private View view;
     private SectionPageAdapter mSectionPageAdapter;
-    private Context mContext;
     private FragmentManager manager;
     private ViewPager mViewPager;
     private ArrayList<String> idList;
@@ -32,15 +32,24 @@ public class HpFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_hp, container, false);
-        mContext = getActivity().getApplication();
+        if (view != null)
+        {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+            {
+                parent.removeView(view);
+            }
+            return view;
+        }
+
+        view = inflater.inflate(R.layout.fragment_hp, container, false);
         if (getArguments() != null)
         {
             idList = getArguments().getStringArrayList(getString(R.string.id_list_key));
         }
 
         manager = getFragmentManager();
-        mSectionPageAdapter = new SectionPageAdapter(manager);
+        mSectionPageAdapter = new SectionPageAdapter(manager, idList);
         mViewPager = (ViewPager) view.findViewById(R.id.container);
         mViewPager.setAdapter(mSectionPageAdapter);
         return view;
@@ -48,15 +57,18 @@ public class HpFragment extends Fragment
 
     public class SectionPageAdapter extends FragmentPagerAdapter
     {
-        public SectionPageAdapter(FragmentManager manager)
+        private ArrayList<String> list;
+
+        public SectionPageAdapter(FragmentManager manager, ArrayList<String> list)
         {
             super(manager);
+            this.list = list;
         }
 
         @Override
         public Fragment getItem(int position)
         {
-            String id = idList.get(position);
+            String id = list.get(position);
             Log.e("id", position + ":" + id);
             DetailFragment detailFragment = new DetailFragment();
             Bundle bundle = new Bundle();
@@ -68,7 +80,7 @@ public class HpFragment extends Fragment
         @Override
         public int getCount()
         {
-            return idList.size();
+            return list.size();
         }
     }
 }

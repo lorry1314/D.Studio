@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.dstudio.wd.one.fragment.DetailFragment;
 import com.dstudio.wd.one.fragment.HistoryFragment;
@@ -25,6 +26,8 @@ import com.dstudio.wd.one.util.LocalData;
 
 import java.util.ArrayList;
 
+import cn.sharesdk.framework.ShareSDK;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity
     private HpFragment hpFragment;
     private ReadingFragment fgReading;
     private HistoryFragment fgHistory;
-
+    private DrawerLayout drawer;
     private FragmentManager manager;
     private FragmentTransaction transaction;
 
@@ -48,7 +51,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mContext = getApplicationContext();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ShareSDK.initSDK(mContext, "12f22f597909e");
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -74,11 +78,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.share, menu);
         return true;
     }
 
@@ -91,25 +96,24 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
+        if (id == R.id.action_share)
         {
+            Toast.makeText(mContext, "ok1", Toast.LENGTH_SHORT).show();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+    */
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item)
     {
-        manager = getSupportFragmentManager();
         transaction = manager.beginTransaction();
-
         switch (item.getItemId())
         {
             case R.id.nav_detail:  // 首页
-                Log.d(TAG, "item nav_detail");
                 transaction.replace(R.id.fram_layout, hpFragment);
                 break;
             case R.id.nav_read:    // 阅读
@@ -120,8 +124,6 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         transaction.commit();
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -23,6 +24,9 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.util.List;
 
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
+
 public class QuestionActivity extends AppCompatActivity
 {
     private Context mContext;
@@ -32,6 +36,8 @@ public class QuestionActivity extends AppCompatActivity
     private TextView txtAnswerTitle;
     private TextView txtAnswerContent;
     private TextView txtAuthorIntroduce;
+
+    private String webUrl;
 
     private static final String TAG = "QuestionActivity";
     private static final int SHOW_CONTENT = 0;
@@ -48,6 +54,7 @@ public class QuestionActivity extends AppCompatActivity
                 txtAnswerTitle.setText(data.getAnswerTitle());
                 txtAnswerContent.setText(Html.fromHtml(data.getAnswerContent()));
                 txtAuthorIntroduce.setText(data.getChargeEdt());
+                webUrl = data.getWebUrl();
             }
         }
     };
@@ -105,6 +112,21 @@ public class QuestionActivity extends AppCompatActivity
     {
         getMenuInflater().inflate(R.menu.share, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+
+        if (id == R.id.action_share)
+        {
+            HttpUtil.showShare(mContext, txtQuestionTitle.getText().toString(), txtQuestionContent.getText().toString(),
+                    webUrl, getString(R.string.icon_url));
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void sendRequest(final String questionId)
