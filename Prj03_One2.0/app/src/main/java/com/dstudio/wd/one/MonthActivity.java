@@ -77,9 +77,17 @@ public class MonthActivity extends AppCompatActivity
         String month = getIntent().getStringExtra("month");
         date = DateUtil.formatEngToNumeric(month, "MMM.yyyy");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(month);
         setSupportActionBar(toolbar);
-        CharSequence cs = month;
-        toolbar.setTitle(cs);
+        toolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                finish();
+            }
+        });
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

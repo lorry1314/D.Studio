@@ -336,18 +336,7 @@ public class HpAdapter extends RecyclerView.Adapter<HpAdapter.ViewHolder>
                 Bitmap bitmap = null;
                 if (fileDescriptor != null)
                 {
-                    bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-                    /*
-                    try
-                    {
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-                    }
-                    catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    */
+                    bitmap = compressBitmap(fileDescriptor);
                 }
                 if (bitmap != null)
                 {
@@ -419,6 +408,37 @@ public class HpAdapter extends RecyclerView.Adapter<HpAdapter.ViewHolder>
                 }
             }
             return false;
+        }
+
+        private Bitmap compressBitmap(FileDescriptor fileDescriptor)
+        {
+            Bitmap bitmap = null;
+            BitmapFactory.Options ops = new BitmapFactory.Options();
+            ops.inJustDecodeBounds = true;
+            bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, ops);
+            ops.inJustDecodeBounds = false;
+            int width = ops.outWidth;
+            int height = ops.outHeight;
+            float fWidth = 400f;
+            float fHeight = 300f;
+            int be = 1;
+            if (width > height && width > fWidth)
+            {
+                be = (int) (ops.outWidth / fWidth);
+            }
+            else if (width < height && height > fHeight)
+            {
+                be = (int) (ops.outHeight / fHeight);
+            }
+            if (be < 0)
+            {
+                be = 1;
+            }
+            ops.inSampleSize = be;
+            ops.inPurgeable = true;
+            ops.inInputShareable = true;
+            bitmap = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, ops);
+            return bitmap;
         }
     }
 }

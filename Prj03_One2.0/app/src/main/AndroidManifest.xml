@@ -45,7 +45,7 @@
         </activity>
         <activity
             android:name=".MonthActivity"
-            android:label="@string/title_activity_month"
+            android:label=""
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".HpActivity"
