@@ -1,4 +1,4 @@
-package com.dstudio.wd.one;
+package com.dstudio.wd.one.activity;
 
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.fragment.DetailFragment;
 
 public class HpActivity extends AppCompatActivity

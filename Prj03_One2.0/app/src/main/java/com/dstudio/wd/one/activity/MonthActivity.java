@@ -1,4 +1,4 @@
-package com.dstudio.wd.one;
+package com.dstudio.wd.one.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.entity.Reading;
 import com.dstudio.wd.one.entity.question.Data;
 import com.dstudio.wd.one.fragment.ListDetailFragment;

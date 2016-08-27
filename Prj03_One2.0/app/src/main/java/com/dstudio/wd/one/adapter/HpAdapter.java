@@ -69,7 +69,7 @@ public class HpAdapter extends RecyclerView.Adapter<HpAdapter.ViewHolder>
         };
         try
         {
-            File cacheDir = getDiskCacheDir(context, "thumb");
+            File cacheDir = getDiskCacheDir(context, "Bitmap");
             if (!cacheDir.exists())
             {
                 cacheDir.mkdirs();
@@ -98,7 +98,6 @@ public class HpAdapter extends RecyclerView.Adapter<HpAdapter.ViewHolder>
         String hpTitle = getItem(position).getHpTitle();
         holder.imgDetail.setImageResource(R.drawable.loading);
         holder.imgDetail.setTag(imgUrl);
-        Log.d("TAG", "tag -- " + imgUrl);
         loadBitmaps(holder, holder.imgDetail, imgUrl);
     }
 

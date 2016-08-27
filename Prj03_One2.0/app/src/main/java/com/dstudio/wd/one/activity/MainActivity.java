@@ -1,7 +1,8 @@
-package com.dstudio.wd.one;
+package com.dstudio.wd.one.activity;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.fragment.DetailFragment;
 import com.dstudio.wd.one.fragment.HistoryFragment;
 import com.dstudio.wd.one.fragment.HpFragment;
@@ -60,7 +62,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         initView();
     }
 
@@ -122,6 +123,13 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_history:  // 过往
                 transaction.replace(R.id.fram_layout, fgHistory);
                 break;
+            case R.id.nav_share:   // 分享此应用
+                shareApp();
+                break;
+            case R.id.nav_setting:  // 选项
+                Intent intent = new Intent(mContext, SettingActivity.class);
+                startActivity(intent);
+                break;
         }
         transaction.commit();
         drawer.closeDrawer(GravityCompat.START);
@@ -174,5 +182,14 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         bundle.putString(getString(R.string.reading_index_key), response);
         fgReading.setArguments(bundle);
+    }
+
+    public void shareApp()
+    {
+        String appTitle = getString(R.string.app_title);
+        String appText = getString(R.string.app_text);
+        String appUrl = getString(R.string.app_url);
+        String appIconUrl = getString(R.string.icon_url);
+        HttpUtil.showShare(mContext, appTitle, appText, appUrl, appIconUrl);
     }
 }

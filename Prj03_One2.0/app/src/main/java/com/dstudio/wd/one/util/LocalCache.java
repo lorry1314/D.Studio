@@ -222,7 +222,11 @@ public class LocalCache
         try
         {
             DiskLruCache mDiskLruCache = openDiskLruCache(context, "Bitmap");
-            DiskLruCache.Snapshot snapshot = mDiskLruCache.get(key);
+            DiskLruCache.Snapshot snapshot = null;
+            if (mDiskLruCache != null)
+            {
+                snapshot = mDiskLruCache.get(key);
+            }
             if (snapshot != null)
             {
                 InputStream is = snapshot.getInputStream(0);

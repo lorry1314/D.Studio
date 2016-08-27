@@ -17,9 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.dstudio.wd.one.EssayActivity;
+import com.dstudio.wd.one.activity.EssayActivity;
 import com.dstudio.wd.one.adapter.MyAdapter;
-import com.dstudio.wd.one.QuestionActivity;
+import com.dstudio.wd.one.activity.QuestionActivity;
 import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.entity.Author;
 import com.dstudio.wd.one.entity.Data;

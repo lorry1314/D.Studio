@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference android:title="清除缓存"
+                android:key="setting_cache"
+                android:summary="正在计算当前缓存大小...">
+    </Preference>
+
+    <Preference android:title="关于"
+                android:key="setting_about">
+    </Preference>
+</PreferenceScreen>

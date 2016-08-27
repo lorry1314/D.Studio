@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.dstudio.wd.one.MonthActivity;
+import com.dstudio.wd.one.activity.MonthActivity;
 import com.dstudio.wd.one.R;
 
 import java.text.SimpleDateFormat;

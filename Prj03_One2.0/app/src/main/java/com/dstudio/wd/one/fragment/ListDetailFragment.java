@@ -2,27 +2,19 @@ package com.dstudio.wd.one.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
-import com.dstudio.wd.one.HpActivity;
+import com.dstudio.wd.one.activity.HpActivity;
 import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.adapter.HpAdapter;
 import com.dstudio.wd.one.adapter.MyItemClickListener;

@@ -1,11 +1,10 @@
-package com.dstudio.wd.one;
+package com.dstudio.wd.one.activity;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -14,8 +13,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.dstudio.wd.one.util.HttpCallbackListener;
-import com.dstudio.wd.one.util.HttpUtil;
+import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.util.LocalData;
 
 import org.json.JSONArray;

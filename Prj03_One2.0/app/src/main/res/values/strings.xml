@@ -1,4 +1,4 @@
-<resources tools:ignore="MissingTranslation" xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">ONE</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -35,4 +35,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_month">MonthActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+
+    <!-- 分享此应用 -->
+    <string name="app_title">ONE·一个</string>
+    <string name="app_text">ONE IS ALL, 《ONE》第三方应用, by DEMON</string>
+    <string name="app_url">http://www.wandoujia.com/apps/com.dstudio.wd.one</string>
+    <string name="title_activity_settings">选项</string>
+
+    <string name="app_ver">1.4</string>
+    <string name="title_activity_setting">SettingActivity</string>
 </resources>

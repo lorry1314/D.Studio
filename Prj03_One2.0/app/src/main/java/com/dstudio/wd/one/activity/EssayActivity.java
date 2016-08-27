@@ -1,4 +1,4 @@
-package com.dstudio.wd.one;
+package com.dstudio.wd.one.activity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,14 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.entity.Author;
 import com.dstudio.wd.one.entity.essay.Data;
 import com.dstudio.wd.one.entity.essay.Root;
@@ -27,9 +26,6 @@ import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.List;
-
-import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.onekeyshare.OnekeyShare;
 
 public class EssayActivity extends AppCompatActivity
 {

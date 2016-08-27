@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.LruCache;
 import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +35,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dstudio.wd.one.R;
@@ -96,10 +99,6 @@ public class DetailFragment extends Fragment
                 imgUrl = detail.getHpImgUrl();
                 getPraiseNum();
             }
-            else if (msg.what == SHOW_IMG)
-            {
-                imgHp.setImageBitmap((Bitmap) msg.obj);
-            }
             else if (msg.what == SHOW_PRAISE)
             {
                 txtPraiseNum.setText((String) msg.obj);
@@ -126,6 +125,7 @@ public class DetailFragment extends Fragment
         txtMaketTime = (TextView) view.findViewById(R.id.makettime);
         txtHpTitle = (TextView) view.findViewById(R.id.hp_title);
         imgHp = (ImageView) view.findViewById(R.id.img);
+
         txtHpAuthor = (TextView) view.findViewById(R.id.hp_author);
         txtHpContent = (TextView) view.findViewById(R.id.hp_content);
         txtPraiseNum = (TextView) view.findViewById(R.id.praise_num);
@@ -247,32 +247,10 @@ public class DetailFragment extends Fragment
                 hpContentId = data.getString("hpcontent_id");
                 LocalData.save(response, getString(R.string.file_name_detail) + hpContentId, mContext);
 
-                // 图片加载线程
-                final String imgUrl = data.getString("hp_img_url");
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        Bitmap bitmap = LocalCache.readImgCache(getActivity(), imgUrl);
-                        if(bitmap == null)
-                        {
-                            LocalCache.writeCache(getActivity(), imgUrl, "Bitmap");
-                            while (true)
-                            {
-                                if (LocalCache.writeCache(getActivity(), imgUrl, "Bitmap"))
-                                {
-                                    bitmap = LocalCache.readImgCache(getActivity(), imgUrl);
-                                    break;
-                                }
-                            }
-                        }
-                        Message message1 = new Message();
-                        message1.what = SHOW_IMG;
-                        message1.obj = bitmap;
-                        handler.sendMessage(message1);
-                    }
-                }).start();
+                String imgUrl = data.getString("hp_img_url");
+                ImageLoader imageLoader = new ImageLoader(mQueue, new BitmapCache());
+                ImageLoader.ImageListener listener = ImageLoader.getImageListener(imgHp, R.drawable.loading, R.drawable.loading);
+                imageLoader.get(imgUrl, listener, 1000, 1000);
 
                 Detail detail = new Detail();
                 detail.setHpTitle(data.getString("hp_title"));
@@ -361,6 +339,36 @@ public class DetailFragment extends Fragment
                 e.printStackTrace();
             }
         });
+    }
+
+    public class BitmapCache implements ImageLoader.ImageCache
+    {
+        private LruCache<String, Bitmap> mCache;
+
+        public BitmapCache()
+        {
+            int maxSize = 10 * 1024 * 1024;
+            mCache = new LruCache<String, Bitmap>(maxSize)
+            {
+                @Override
+                protected int sizeOf(String key, Bitmap value)
+                {
+                    return value.getRowBytes() * value.getHeight();
+                }
+            };
+        }
+
+        @Override
+        public Bitmap getBitmap(String s)
+        {
+            return mCache.get(s);
+        }
+
+        @Override
+        public void putBitmap(String s, Bitmap bitmap)
+        {
+            mCache.put(s, bitmap);
+        }
     }
 
 
