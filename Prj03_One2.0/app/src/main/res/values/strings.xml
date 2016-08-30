@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">ONE</string>
+    <string name="app_name">ONE·一个</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -43,6 +43,6 @@
     <string name="app_url">http://www.wandoujia.com/apps/com.dstudio.wd.one</string>
     <string name="title_activity_settings">选项</string>
 
-    <string name="app_ver">1.4</string>
+    <string name="app_ver">2.0</string>
     <string name="title_activity_setting">SettingActivity</string>
 </resources>

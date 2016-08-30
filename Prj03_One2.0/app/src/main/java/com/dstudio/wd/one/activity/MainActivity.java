@@ -4,6 +4,7 @@ package com.dstudio.wd.one.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity
     private FragmentTransaction transaction;
 
     private ArrayList<String> idList;
+
+    private long exitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -191,5 +195,25 @@ public class MainActivity extends AppCompatActivity
         String appUrl = getString(R.string.app_url);
         String appIconUrl = getString(R.string.icon_url);
         HttpUtil.showShare(mContext, appTitle, appText, appUrl, appIconUrl);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN)
+        {
+            if ((System.currentTimeMillis() - exitTime) > 2000)
+            {
+                Toast.makeText(mContext, "再按一次退出应用", Toast.LENGTH_SHORT).show();
+                exitTime = System.currentTimeMillis();
+            }
+            else
+            {
+                finish();
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
