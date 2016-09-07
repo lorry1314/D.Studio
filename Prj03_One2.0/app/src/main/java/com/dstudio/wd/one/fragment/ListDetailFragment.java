@@ -24,6 +24,7 @@ import com.dstudio.wd.one.util.HttpCallbackListener;
 import com.dstudio.wd.one.util.HttpUtil;
 import com.dstudio.wd.one.util.LocalData;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -158,6 +159,7 @@ public class ListDetailFragment extends Fragment
     {
         super.onPause();
         hpAdapter.flushCache();
+        MobclickAgent.onPageEnd("ListDetailFragment");
     }
 
     @Override
@@ -166,4 +168,11 @@ public class ListDetailFragment extends Fragment
         super.onDestroy();
         hpAdapter.cancalAllTask();
     }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("ListDetailFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
 }

@@ -30,6 +30,7 @@ import com.dstudio.wd.one.util.HttpCallbackListener;
 import com.dstudio.wd.one.util.HttpUtil;
 import com.dstudio.wd.one.adapter.MyItemClickListener;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -368,5 +369,17 @@ public class ReadingFragment extends Fragment
         {
             e.printStackTrace();
         }
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("ReadingFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("ReadingFragment");
     }
 }

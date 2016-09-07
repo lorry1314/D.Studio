@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.fragment.DetailFragment;
+import com.umeng.analytics.MobclickAgent;
 
 public class HpActivity extends AppCompatActivity
 {
@@ -35,5 +36,17 @@ public class HpActivity extends AppCompatActivity
         detailFragment.setArguments(bundle);
         transaction.replace(R.id.hp_fragment, detailFragment);
         transaction.commit();
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

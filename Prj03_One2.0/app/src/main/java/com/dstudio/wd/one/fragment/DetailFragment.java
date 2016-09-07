@@ -44,6 +44,7 @@ import com.dstudio.wd.one.util.HttpCallbackListener;
 import com.dstudio.wd.one.util.HttpUtil;
 import com.dstudio.wd.one.util.LocalCache;
 import com.dstudio.wd.one.util.LocalData;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONObject;
 
@@ -371,5 +372,16 @@ public class DetailFragment extends Fragment
         }
     }
 
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("DetailFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("DetailFragment");
+    }
 
 }

@@ -23,6 +23,7 @@ import com.dstudio.wd.one.util.HttpUtil;
 import com.dstudio.wd.one.util.LocalCache;
 import com.dstudio.wd.one.util.LocalData;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.util.List;
@@ -201,5 +202,19 @@ public class EssayActivity extends AppCompatActivity
                 handler.sendMessage(msg);
             }
         }).start();
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("EssayActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("EssayActivity");
+        MobclickAgent.onPause(this);
     }
 }

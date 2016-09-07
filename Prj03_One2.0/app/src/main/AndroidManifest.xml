@@ -93,6 +93,9 @@
             android:label="关于"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+
+        <meta-data android:value="57cfbdc0e0f55ae65d00064f" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="Wandoujia" android:name="UMENG_CHANNEL"/>
     </application>
 
 </manifest>

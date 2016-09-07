@@ -55,4 +55,6 @@ public class SettingActivityFragment extends PreferenceFragment
         return true;
     }
 
+
+
 }

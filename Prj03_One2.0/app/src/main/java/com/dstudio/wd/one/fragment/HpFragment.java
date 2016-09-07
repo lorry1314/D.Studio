@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dstudio.wd.one.R;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 
@@ -82,5 +83,17 @@ public class HpFragment extends Fragment
         {
             return list.size();
         }
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("HpFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("HpFragment");
     }
 }

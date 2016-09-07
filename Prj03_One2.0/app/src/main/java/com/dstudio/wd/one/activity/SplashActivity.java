@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.util.LocalData;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +58,8 @@ public class SplashActivity extends Activity
         setContentView(R.layout.activity_splash);
         mContext = getApplicationContext();
         mQueue = Volley.newRequestQueue(mContext);
+        // MobclickAgent.setDebugMode(true);
+        MobclickAgent.openActivityDurationTrack(false);
         sendRequest();
     }
 
@@ -127,4 +130,19 @@ public class SplashActivity extends Activity
             }
         }, 1000);
     }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("SplashActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("SplashActivity");
+        MobclickAgent.onPause(this);
+    }
+
 }

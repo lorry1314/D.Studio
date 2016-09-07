@@ -18,6 +18,7 @@ import com.dstudio.wd.one.util.HttpCallbackListener;
 import com.dstudio.wd.one.util.HttpUtil;
 import com.dstudio.wd.one.util.LocalData;
 import com.google.gson.Gson;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 
@@ -154,5 +155,19 @@ public class QuestionActivity extends AppCompatActivity
             msg.obj = root.getData();
             handler.sendMessage(msg);
         }
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("QuestionActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("QuestionActivity");
+        MobclickAgent.onPause(this);
     }
 }

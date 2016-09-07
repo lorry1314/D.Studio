@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.dstudio.wd.one.R;
+import com.umeng.analytics.MobclickAgent;
 
 public class AboutActivity extends AppCompatActivity
 {
@@ -26,5 +27,19 @@ public class AboutActivity extends AppCompatActivity
                 finish();
             }
         });
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("AboutActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("AboutActivity");
+        MobclickAgent.onPause(this);
     }
 }

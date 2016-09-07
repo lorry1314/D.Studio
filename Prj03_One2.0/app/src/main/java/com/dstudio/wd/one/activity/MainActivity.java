@@ -27,6 +27,7 @@ import com.dstudio.wd.one.fragment.ReadingFragment;
 import com.dstudio.wd.one.util.HttpCallbackListener;
 import com.dstudio.wd.one.util.HttpUtil;
 import com.dstudio.wd.one.util.LocalData;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 
@@ -215,5 +216,17 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

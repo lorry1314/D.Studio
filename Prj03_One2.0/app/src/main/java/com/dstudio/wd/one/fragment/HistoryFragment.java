@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.dstudio.wd.one.activity.MonthActivity;
 import com.dstudio.wd.one.R;
+import com.umeng.analytics.MobclickAgent;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -87,6 +88,18 @@ public class HistoryFragment extends Fragment
             }
         }
         return monthList;
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("HistoryFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("HistoryFragment");
     }
 
 }

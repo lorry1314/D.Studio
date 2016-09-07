@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.dstudio.wd.one.R;
+import com.umeng.analytics.MobclickAgent;
 
 public class SettingActivity extends AppCompatActivity
 {
@@ -29,6 +30,20 @@ public class SettingActivity extends AppCompatActivity
                 finish();
             }
         });
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("SettingActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("SettingActivity");
+        MobclickAgent.onPause(this);
     }
 
 }
