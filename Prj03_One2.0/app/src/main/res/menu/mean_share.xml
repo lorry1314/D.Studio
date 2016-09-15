@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+        <item android:id="@+id/share_img" android:title="分享至..."/>
+        <item android:id="@+id/save_img" android:title="保存图片"/>
+    </group>
+</menu>

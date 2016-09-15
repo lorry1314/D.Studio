@@ -1,33 +1,31 @@
 package com.dstudio.wd.one.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Point;
-import android.os.Build;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.LruCache;
 import android.support.v7.widget.CardView;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.GestureDetector;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,14 +40,16 @@ import com.dstudio.wd.one.R;
 import com.dstudio.wd.one.entity.Detail;
 import com.dstudio.wd.one.util.HttpCallbackListener;
 import com.dstudio.wd.one.util.HttpUtil;
-import com.dstudio.wd.one.util.LocalCache;
 import com.dstudio.wd.one.util.LocalData;
 import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -126,7 +126,6 @@ public class DetailFragment extends Fragment
         txtMaketTime = (TextView) view.findViewById(R.id.makettime);
         txtHpTitle = (TextView) view.findViewById(R.id.hp_title);
         imgHp = (ImageView) view.findViewById(R.id.img);
-
         txtHpAuthor = (TextView) view.findViewById(R.id.hp_author);
         txtHpContent = (TextView) view.findViewById(R.id.hp_content);
         txtPraiseNum = (TextView) view.findViewById(R.id.praise_num);
@@ -143,27 +142,54 @@ public class DetailFragment extends Fragment
                 }
                 else
                 {
-                    Toast.makeText(mContext, "你已经点过赞了", Toast.LENGTH_SHORT).show();
+                    int praiseNum = Integer.parseInt(txtPraiseNum.getText().toString()) - 1;
+                    txtPraiseNum.setText(praiseNum + "");
+                    isPraised = false;
+                    btnPraise.setImageResource(R.drawable.ic_favorite_black_22dp);
                 }
             }
         });
         scrollView = (ScrollView) view.findViewById(R.id.scroll_view);
         cardDetail = (CardView) view.findViewById(R.id.detail_card_view);
-        cardDetail.setOnLongClickListener(new View.OnLongClickListener()
-        {
-            @Override
-            public boolean onLongClick(View view)
-            {
-                HttpUtil.showShare(mContext, txtHpTitle.getText().toString(), txtHpContent.getText().toString(),
-                        webUrl, imgUrl);
-                return false;
-            }
-        });
+        registerForContextMenu(cardDetail);
+
         if (!"".equals(hpContentId))
         {
             getContent();
         }
         return view;
+    }
+
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
+    {
+        MenuInflater inflater = new MenuInflater(mContext);
+        inflater.inflate(R.menu.mean_share, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)
+    {
+        if (getUserVisibleHint())
+        {
+            switch (item.getItemId())
+            {
+                case R.id.share_img:
+                    HttpUtil.showShare(mContext, txtHpTitle.getText().toString(), txtHpContent.getText().toString(),
+                            webUrl, imgUrl);
+                    break;
+                case R.id.save_img:
+                    imgHp.setDrawingCacheEnabled(true);
+                    Bitmap img = ((BitmapDrawable) imgHp.getDrawable()).getBitmap();
+                    saveImageToGallery(mContext, img, txtHpTitle.getText().toString());
+                    imgHp.setDrawingCacheEnabled(false);
+                    break;
+            }
+            return true;
+        }
+        return false;
     }
 
     public void getContent()
@@ -283,29 +309,36 @@ public class DetailFragment extends Fragment
 
     public void addPraise()
     {
-        TelephonyManager manager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
-        String deviceId = manager.getDeviceId();
-        String simSerialNumber = manager.getSimSerialNumber();
-        String androidId = android.provider.Settings.Secure.getString(mContext.getContentResolver(),
-                android.provider.Settings.Secure.ANDROID_ID);
-        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) deviceId.hashCode() << 32) | simSerialNumber.hashCode());
-
-        postParam = "itemid=" + hpContentId + "&type=hpcontent&deviceid=" + deviceUuid.toString() + "&devicetype=android";
-        HttpUtil.sendPost(getString(R.string.add_praise_api), postParam, new HttpCallbackListener()
+        try
         {
-            @Override
-            public void onFinish(String response)
-            {
-                Log.d(TAG, response);
-                getPraiseNum();
-            }
+            TelephonyManager manager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+            String deviceId = manager.getDeviceId();
+            String simSerialNumber = manager.getSimSerialNumber();
+            String androidId = android.provider.Settings.Secure.getString(mContext.getContentResolver(),
+                    android.provider.Settings.Secure.ANDROID_ID);
+            UUID deviceUuid = new UUID(androidId.hashCode(), ((long) deviceId.hashCode() << 32) | simSerialNumber.hashCode());
 
-            @Override
-            public void onError(Exception e)
+            postParam = "itemid=" + hpContentId + "&type=hpcontent&deviceid=" + deviceUuid.toString() + "&devicetype=android";
+            HttpUtil.sendPost(getString(R.string.add_praise_api), postParam, new HttpCallbackListener()
             {
-                e.printStackTrace();
-            }
-        });
+                @Override
+                public void onFinish(String response)
+                {
+                    Log.d(TAG, response);
+                    getPraiseNum();
+                }
+
+                @Override
+                public void onError(Exception e)
+                {
+                    e.printStackTrace();
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(mContext, "发送数据失败！" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void getPraiseNum()
@@ -340,6 +373,59 @@ public class DetailFragment extends Fragment
                 e.printStackTrace();
             }
         });
+    }
+
+    public static void saveImageToGallery(Context context, Bitmap bmp, String fileName)
+    {
+        // 首先保存图片
+        String savePath;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
+                || !Environment.isExternalStorageRemovable())
+        {
+            savePath = Environment.getExternalStorageDirectory().getPath();
+        }
+        else
+        {
+            savePath = context.getFilesDir().getPath();
+        }
+        File appDir = new File(savePath, Environment.DIRECTORY_PICTURES + "/ONE");
+        if (!appDir.exists())
+        {
+            appDir.mkdir();
+        }
+        fileName = fileName + ".jpg";
+        File file = new File(appDir, fileName);
+        try
+        {
+            FileOutputStream fos = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        // 其次把文件插入到系统图库
+        try
+        {
+            MediaStore.Images.Media.insertImage(context.getContentResolver(),
+                    file.getAbsolutePath(), fileName, null);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        String path = savePath + "/" + Environment.DIRECTORY_PICTURES + "/ONE";
+        Log.d(TAG, path);
+        // 最后通知图库更新
+        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + path + "/" + fileName)));
+        Toast.makeText(context, "图片已保存在" + path, Toast.LENGTH_LONG).show();
     }
 
     public class BitmapCache implements ImageLoader.ImageCache
@@ -383,5 +469,4 @@ public class DetailFragment extends Fragment
         super.onPause();
         MobclickAgent.onPageEnd("DetailFragment");
     }
-
 }
