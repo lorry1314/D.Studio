@@ -1,5 +1,7 @@
-，
 package com.dstudio.wd.dweather.adapter;
+
+import android.widget.BaseAdapter;
+
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dstudio.wd.dweather.R;
+import com.dstudio.wd.dweather.adapter.DailyWt;
 
 import java.util.LinkedList;
 import java.util.zip.Inflater;

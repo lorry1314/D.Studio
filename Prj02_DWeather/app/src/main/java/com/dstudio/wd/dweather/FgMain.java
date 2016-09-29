@@ -28,6 +28,7 @@ import com.dstudio.wd.dweather.http.LocalCache;
 import com.dstudio.wd.dweather.localdata.LocalData;
 import com.dstudio.wd.dweather.tools.ListViewInScrollView;
 import com.dstudio.wd.dweather.tools.WtImg;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -407,5 +408,16 @@ public class FgMain extends Fragment
                 Toast.makeText(mContext, "出错了.. :(", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("MainScreen"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("MainScreen");
     }
 }

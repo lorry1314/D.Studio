@@ -39,6 +39,7 @@ import com.dstudio.wd.dweather.localdata.LocalData;
 import com.dstudio.wd.dweather.location.Location;
 import com.dstudio.wd.dweather.location.MyLocationListener;
 import com.dstudio.wd.dweather.tools.Judgement;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -455,5 +456,17 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(mContext, "出错了..", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onResume(this);       //统计时长
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }

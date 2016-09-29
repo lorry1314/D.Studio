@@ -10,6 +10,7 @@ package com.dstudio.wd.dweather;
 
         import com.dstudio.wd.dweather.http.LocalCache;
         import com.dstudio.wd.dweather.tools.Judgement;
+        import com.umeng.analytics.MobclickAgent;
 
         import java.io.File;
         import java.io.FileOutputStream;
@@ -26,6 +27,7 @@ public class SplashActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        MobclickAgent.openActivityDurationTrack(false);
         mContext = SplashActivity.this;
         try
         {
@@ -97,5 +99,19 @@ public class SplashActivity extends Activity
                 db.close();
             }
         }).start();
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        MobclickAgent.onPageStart("SplashActivity"); //统计页面(仅有Activity的应用中SDK自动调用，不需要单独写。"SplashScreen"为页面名称，可自定义)
+        MobclickAgent.onResume(this);          //统计时长
+    }
+
+    public void onPause()
+    {
+        super.onPause();
+        MobclickAgent.onPageEnd("SplashActivity"); // （仅有Activity的应用中SDK自动调用，不需要单独写）保证 onPageEnd 在onPause 之前调用,因为 onPause 中会保存信息。"SplashScreen"为页面名称，可自定义
+        MobclickAgent.onPause(this);
     }
 }

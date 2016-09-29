@@ -122,7 +122,7 @@ public class ListDetailFragment extends Fragment
     public void parseJson(String response)
     {
         Root root = new Gson().fromJson(response, Root.class);
-        if (root.getRes() == 0)
+        if (root != null && root.getRes() == 0)
         {
             List<Data> datas = root.getData();
             for (int i = 0; i < datas.size(); i++)
@@ -135,24 +135,6 @@ public class ListDetailFragment extends Fragment
             handler.sendMessage(message);
         }
     }
-
-    /*
-    public void setTxtColor(HpAdapter.ViewHolder holder)
-    {
-        holder.imgDetail.setDrawingCacheEnabled(true);
-        if (holder.imgDetail.getDrawingCache() != null)
-        {
-            Bitmap bitmap = Bitmap.createBitmap(holder.imgDetail.getDrawingCache());
-            Palette palette = Palette.generate(bitmap);
-            Palette.Swatch swatch = palette.getLightVibrantSwatch();
-            if (swatch != null)
-            {
-                holder.txtDetail.setTextColor(swatch.getBodyTextColor());
-            }
-        }
-        holder.imgDetail.setDrawingCacheEnabled(false);
-    }
-    */
 
     @Override
     public void onPause()
@@ -174,5 +156,4 @@ public class ListDetailFragment extends Fragment
         super.onResume();
         MobclickAgent.onPageStart("ListDetailFragment"); //统计页面，"MainScreen"为页面名称，可自定义
     }
-
 }

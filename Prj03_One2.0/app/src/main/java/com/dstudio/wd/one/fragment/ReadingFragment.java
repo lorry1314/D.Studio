@@ -191,7 +191,7 @@ public class ReadingFragment extends Fragment
             public void run()
             {
                 Root root = new Gson().fromJson(result, Root.class);
-                if (root.getRes() == 0)
+                if (root != null && root.getRes() == 0)
                 {
                     List<Data> dataList = root.getData();
                     for (int i = 0; i < dataList.size(); i++)

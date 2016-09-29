@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.dstudio.wd.one.R;
@@ -26,6 +27,15 @@ public class HpActivity extends AppCompatActivity
         setContentView(R.layout.activity_hp);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_keyboard_backspace_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                finish();
+            }
+        });
         mContext = getApplicationContext();
         String id = getIntent().getExtras().getString("hpid");
         DetailFragment detailFragment = new DetailFragment();

@@ -39,10 +39,10 @@
 
     <!-- 分享此应用 -->
     <string name="app_title">ONE·一个</string>
-    <string name="app_text">ONE IS ALL, 《ONE》第三方应用, by DEMON</string>
+    <string name="app_text">ONE IS ALL, 《一个》第三方应用, by DEMON</string>
     <string name="app_url">http://www.wandoujia.com/apps/com.dstudio.wd.one</string>
     <string name="title_activity_settings">选项</string>
 
-    <string name="app_ver">2.0</string>
+    <string name="app_ver">2.1</string>
     <string name="title_activity_setting">SettingActivity</string>
 </resources>
